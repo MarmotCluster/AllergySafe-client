@@ -2,11 +2,7 @@ import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import server from '../configs/server';
 import API from '../configs/API';
 
-interface REST {
-  [key: string]: 'get' | 'post' | 'put' | 'delete';
-}
-
-export const REST: REST = {
+export const REST = {
   GET: 'get',
   POST: 'post',
   PUT: 'put',
@@ -41,15 +37,19 @@ export const getYupErrorMessages = ({ path, message, inner }: YupErrorMessage) =
   return { [path]: message };
 };
 
-export const refresh = (
-  method: 'get' | 'post' | 'put' | 'delete',
-  address: string,
-  config: { data?: any; header?: AxiosRequestConfig['headers'] }
-) => {
-  const fetchData = async (bypass: boolean = false): Promise<any> => {
+/**
+ *
+ * @param {'get' | 'post' | 'put' | 'delete'} method
+ * @param {string} address
+ * @param {{ data?: any; header?: AxiosRequestConfig['headers'] }} config
+ * @returns {Promise<any>}
+ */
+export const refresh = (method, address, config) => {
+  const fetchData = async (bypass = false) => {
     const storedToken = window.localStorage.getItem('accessToken');
     const refreshToken = window.localStorage.getItem('refreshToken');
-    let res: AxiosResponse<any, any>;
+    /**@type {AxiosResponse<any, any>} */
+    let res;
 
     if (storedToken) {
       try {
@@ -69,7 +69,7 @@ export const refresh = (
           );
         }
 
-        return getResponseUsable(res!);
+        return getResponseUsable(res);
       } catch (err) {
         if (bypass) return { status: 400, data: { message: 'UNKNWON_ERROR' } };
 
@@ -81,12 +81,12 @@ export const refresh = (
 
               try {
                 const refreshResult = await server.post(API.AUTH.refresh, { refresh_token: refreshToken });
-                const newToken: string = refreshResult.data.access_token;
+                const newToken = refreshResult.data.access_token;
                 window.localStorage.setItem('accessToken', newToken);
                 return fetchData(true);
               } catch (finalError) {
                 if (finalError instanceof AxiosError) {
-                  return getResponseUsable(finalError.response!);
+                  return getResponseUsable(finalError.response);
                 }
               }
             } else {
@@ -99,12 +99,12 @@ export const refresh = (
     } else if (refreshToken) {
       try {
         const refreshResult = await server.post(API.AUTH.refresh, { refresh_token: refreshToken });
-        const newToken: string = refreshResult.data.access_token;
+        const newToken = refreshResult.data.access_token;
         window.localStorage.setItem('accessToken', newToken);
         return fetchData(true);
       } catch (finalError) {
         if (finalError instanceof AxiosError) {
-          return getResponseUsable(finalError.response!);
+          return getResponseUsable(finalError.response);
         }
       }
     }
@@ -124,7 +124,7 @@ export const tryCatchResponse = (func: () => Promise<ResponseUsable>): Promise<R
     });
   } catch (err) {
     if (err instanceof AxiosError) {
-      const res = err.response!;
+      const res = err.response;
       return new Promise((resolve) => resolve(getResponseUsable(res)));
     }
   }

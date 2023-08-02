@@ -11,11 +11,8 @@
 # production
 /build
 
-# IDEs and editors
-/.idea
-/.vscode
-
 # misc
+.tsbackup
 .DS_Store
 .env.local
 .env.development.local

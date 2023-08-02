@@ -18,7 +18,6 @@ const AuthContext = () => {
     let current = location.pathname;
 
     if (current[current.length - 1] === '/' && location.pathname !== '/') {
-      // navigate(location.pathname.slice(0, location.pathname.length - 1));
       current = current.slice(0, current.length - 1);
     } else {
       if (storedToken) {

@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import { Toaster } from 'react-hot-toast';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import AuthContext from './components/global/AuthContext';
 import Home from './pages/home';
 import navigation from './router/navigation';
-import AuthContext from './components/global/AuthContext';
 
-export default function App() {
+const App = () => {
   return (
     <BrowserRouter>
       <Toaster position="bottom-center" />
@@ -18,4 +18,6 @@ export default function App() {
       </Routes>
     </BrowserRouter>
   );
-}
+};
+
+export default App;

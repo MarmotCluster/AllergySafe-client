@@ -4,10 +4,11 @@ import server from '../configs/server';
 import { authState } from '../stores/auth/atom';
 import { getResponseUsable, refresh, REST, tryCatchResponse } from '../utils';
 
-export interface LoginProps {
-  email: string;
-  password: string;
-}
+/**
+ * @typedef {Object} LoginProps
+ * @property {string} email
+ * @property {string} password
+ */
 
 const useAuth = () => {
   const [auth, setAuth] = useRecoilState(authState);
@@ -20,7 +21,12 @@ const useAuth = () => {
     return res;
   };
 
-  const login = async ({ email, password }: LoginProps, remeberMe = false) => {
+  /**
+   *
+   * @param {LoginProps} param0
+   * @param {boolean} remeberMe
+   */
+  const login = async ({ email, password }, remeberMe = false) => {
     return await tryCatchResponse(async () => {
       const res = await server.post(API.AUTH.login, { email, password });
 
@@ -41,7 +47,11 @@ const useAuth = () => {
     setAuth((state) => ({ ...state, isSignedIn: false, userData: null }));
   };
 
-  const register = async (form: any) => {
+  /**
+   *
+   * @param {any} form
+   */
+  const register = async (form) => {
     // try {
     //   const res = await server.post(API.USER.default, form);
     //   return getResponseUsable(res);
