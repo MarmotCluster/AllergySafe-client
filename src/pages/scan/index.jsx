@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Html5QrcodePlugin from '../../components/Html5QrcodePlugin';
-import ResultContainerPlugin from '../../components/ResultContainerPlugin';
+import Html5QrcodePlugin from '../../components/scan/Html5QrcodePlugin';
+import ResultContainerPlugin from '../../components/scan/ResultContainerPlugin';
 
 const Scan = () => {
   const [decodedResults, setDecodedResults] = useState([]);
