@@ -8,6 +8,8 @@ import NoteAltRoundedIcon from '@mui/icons-material/NoteAltRounded';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import CoronavirusRoundedIcon from '@mui/icons-material/CoronavirusRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import { useRecoilState } from 'recoil';
+import { authState } from '../../stores/auth/atom';
 
 /**
  *
@@ -16,7 +18,7 @@ import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 const SingleMenu = (props) => {
   const { activated, children, onClick } = props;
   return (
-    <Box sx={{ display: 'inline-block', width: 'calc(100% / 4 - 50px)', minWidth: 70 }}>
+    <Box sx={{ display: 'inline-block', width: 'calc(100% / 4 - 28px)', minWidth: 70 }}>
       <IconButton size="large" onClick={onClick} sx={{ width: 70, height: 70 }}>
         {children}
       </IconButton>
@@ -28,6 +30,8 @@ const Header = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
+
+  const [auth, setAuth] = useRecoilState(authState);
 
   useEffect(() => {
     console.log(location.pathname);
@@ -80,7 +84,7 @@ const Header = () => {
           <SingleMenu onClick={() => navigate('/profile')}>
             <CoronavirusRoundedIcon fontSize="large" />
           </SingleMenu>
-          <SingleMenu onClick={() => navigate('/account')}>
+          <SingleMenu onClick={() => (auth.isSignedIn ? navigate('/account') : navigate('/login'))}>
             <AccountCircleRoundedIcon fontSize="large" />
           </SingleMenu>
         </Box>

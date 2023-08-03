@@ -4,17 +4,18 @@ import { grey, orange, red } from '@mui/material/colors';
 // A custom theme for this app
 const theme = createTheme({
   typography: {
-    fontFamily: "'Poppins','Montserrat','Open Sans' sans-serif",
+    // fontFamily: "'Noto Serif KR', serif",
+    fontFamily: "'Orbit', sans-serif",
   },
   palette: {
     background: {
       default: '#ffffff',
     },
     primary: {
-      main: '#556cd6',
+      main: '#5A2AA4',
     },
     secondary: {
-      main: '#19857b',
+      main: '#D89EFF',
     },
     warning: {
       main: orange[400],
