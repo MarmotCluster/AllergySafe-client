@@ -5,8 +5,9 @@ import AuthContext from './components/global/AuthContext';
 import Home from './pages/home';
 import navigation from './router/navigation';
 import Header from './components/global/Header';
-import { Container } from '@mui/material';
+import { Container, Box } from '@mui/material';
 import Loading from './components/global/Loading';
+import zIndex from '@mui/material/styles/zIndex';
 
 const App = () => {
   return (

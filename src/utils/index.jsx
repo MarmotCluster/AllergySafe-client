@@ -41,10 +41,11 @@ export const getYupErrorMessages = ({ path, message, inner }: YupErrorMessage) =
  *
  * @param {'get' | 'post' | 'put' | 'delete'} method
  * @param {string} address
- * @param {{ data?: any; header?: AxiosRequestConfig['headers'] }} config
+ * @param {AxiosRequestConfig<any>=} config
+ * @param {any=} data
  * @returns {Promise<any>}
  */
-export const refresh = (method, address, config) => {
+export const refresh = (method, address, config, data) => {
   const fetchData = async (bypass = false) => {
     const storedToken = window.localStorage.getItem('accessToken');
     const refreshToken = window.localStorage.getItem('refreshToken');
@@ -57,15 +58,15 @@ export const refresh = (method, address, config) => {
           res = await server[method](address, {
             ...config,
             headers: {
+              ...config?.headers,
               Authorization: `Bearer ${storedToken}`,
             },
           });
         } else if (method === REST.POST || method === REST.PUT) {
-          const { data, header } = config;
           res = await server[method](
             address,
             { ...data },
-            { headers: { Authorization: `Bearer ${storedToken}`, ...header } }
+            { ...config, headers: { ...config?.headers, Authorization: `Bearer ${storedToken}` } }
           );
         }
 

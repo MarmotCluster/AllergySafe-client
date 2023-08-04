@@ -52,6 +52,7 @@ const Header = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          bgcolor: 'white',
         }}
       >
         <Box

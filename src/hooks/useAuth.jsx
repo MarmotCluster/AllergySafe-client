@@ -14,7 +14,7 @@ const useAuth = () => {
   const [auth, setAuth] = useRecoilState(authState);
 
   const me = async (isCalledInAuthContext = false) => {
-    const res = await refresh(REST.GET, API.USER.me, {});
+    const res = await refresh(REST.GET, API.USER.me);
     res.status === 200 &&
       isCalledInAuthContext &&
       setAuth((state) => ({ ...state, isSignedIn: true, userData: res.data }));
