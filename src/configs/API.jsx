@@ -1,7 +1,7 @@
 const API = {
   AUTH: {
-    login: `/login-api`,
-    refresh: `/refresh-api`,
+    login: `/loginapi`,
+    refresh: `/refreshapi`,
   },
   USER: {
     me: `/get-me`,

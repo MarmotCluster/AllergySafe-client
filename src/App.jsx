@@ -6,11 +6,13 @@ import Home from './pages/home';
 import navigation from './router/navigation';
 import Header from './components/global/Header';
 import { Container } from '@mui/material';
+import Loading from './components/global/Loading';
 
 const App = () => {
   return (
     <BrowserRouter>
       <Toaster position="bottom-center" />
+      <Loading />
       <AuthContext />
       <Header />
       <Routes>
