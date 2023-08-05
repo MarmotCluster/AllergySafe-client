@@ -6,6 +6,7 @@ const theme = createTheme({
   typography: {
     // fontFamily: "'Noto Serif KR', serif",
     fontFamily: "'Orbit', sans-serif",
+    // fontFamily: "'Gowun Dodum', sans-serif",
   },
   palette: {
     background: {
