@@ -27,6 +27,8 @@ import useScan from '../../hooks/useScan';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { useNavigate } from 'react-router-dom';
+import useList from '@mui/base/useList/useList';
+import { friendListState } from '../../stores/lists/friends';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
@@ -39,37 +41,38 @@ const Scan = () => {
 
   /* stores */
   const [global, setGlobal] = useRecoilState(globalState);
+  const [friends, setFriends] = useRecoilState(friendListState);
 
   /* states */
   const [open, setOpen] = useState(true);
   const [selected, setSelected] = useState(() => new Set());
-  const [/**@type {FriendList[]} */ friends, setFriends] = useState([
-    {
-      category: '나',
-      items: [
-        {
-          id: 0,
-          profileImage: null,
-          name: '나님',
-        },
-      ],
-    },
-    {
-      category: '까떼고리 0',
-      items: [
-        {
-          id: 1,
-          profileImage: null,
-          name: '감바스',
-        },
-        {
-          id: 2,
-          profileImage: null,
-          name: '나일론',
-        },
-      ],
-    },
-  ]);
+  // const [/**@type {FriendList[]} */ friends, setFriends] = useState([
+  //   {
+  //     category: '나',
+  //     items: [
+  //       {
+  //         id: 0,
+  //         profileImage: null,
+  //         name: '나님',
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     category: '까떼고리 0',
+  //     items: [
+  //       {
+  //         id: 1,
+  //         profileImage: null,
+  //         name: '감바스',
+  //       },
+  //       {
+  //         id: 2,
+  //         profileImage: null,
+  //         name: '나일론',
+  //       },
+  //     ],
+  //   },
+  // ]);
 
   const [decodedResults, setDecodedResults] = useState([]);
 

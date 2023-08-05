@@ -3,6 +3,7 @@ import Scan from '../pages/scan';
 import Login from '../pages/login';
 import Register from '../pages/register';
 import Diary from '../pages/diary';
+import Account from '../pages/account';
 
 /** contain paths that should not direct on logged in */
 export const ACCESS_DENY_ON_SIGNED_IN = ['/login', , '/register'];
@@ -22,6 +23,10 @@ const navigation = [
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/account',
+    element: <Account />,
   },
   {
     path: '/register',

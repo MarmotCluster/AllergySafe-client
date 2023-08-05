@@ -5,8 +5,8 @@ import { grey, orange, red } from '@mui/material/colors';
 const theme = createTheme({
   typography: {
     // fontFamily: "'Noto Serif KR', serif",
-    fontFamily: "'Orbit', sans-serif",
-    // fontFamily: "'Gowun Dodum', sans-serif",
+    // fontFamily: "'Orbit', sans-serif",
+    fontFamily: "'SamsungOne', Courier",
   },
   palette: {
     background: {

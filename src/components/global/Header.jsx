@@ -85,7 +85,12 @@ const Header = () => {
           <SingleMenu onClick={() => navigate('/profile')}>
             <CoronavirusRoundedIcon fontSize="large" />
           </SingleMenu>
-          <SingleMenu onClick={() => (auth.isSignedIn ? navigate('/account') : navigate('/login'))}>
+          <SingleMenu
+            onClick={() => {
+              // return auth.isSignedIn ? navigate('/account') : navigate('/login');
+              return auth.isSignedIn ? navigate('/login') : navigate('/account');
+            }}
+          >
             <AccountCircleRoundedIcon fontSize="large" />
           </SingleMenu>
         </Box>

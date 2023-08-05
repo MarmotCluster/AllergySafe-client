@@ -43,7 +43,7 @@ export const getYupErrorMessages = ({ path, message, inner }: YupErrorMessage) =
  * @param {string} address
  * @param {AxiosRequestConfig<any>=} config
  * @param {any=} data
- * @returns {Promise<any>}
+ * @returns {Promise<ResponseUsable>}
  */
 export const refresh = (method, address, config, data) => {
   const fetchData = async (bypass = false) => {
