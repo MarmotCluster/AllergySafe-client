@@ -9,6 +9,9 @@ const API = {
   SCAN: {
     search: `/search`,
   },
+  LIST: {
+    friend: `/list/friends`,
+  },
 };
 
 export default API;

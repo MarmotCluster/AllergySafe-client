@@ -46,34 +46,6 @@ const Scan = () => {
   /* states */
   const [open, setOpen] = useState(true);
   const [selected, setSelected] = useState(() => new Set());
-  // const [/**@type {FriendList[]} */ friends, setFriends] = useState([
-  //   {
-  //     category: '나',
-  //     items: [
-  //       {
-  //         id: 0,
-  //         profileImage: null,
-  //         name: '나님',
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     category: '까떼고리 0',
-  //     items: [
-  //       {
-  //         id: 1,
-  //         profileImage: null,
-  //         name: '감바스',
-  //       },
-  //       {
-  //         id: 2,
-  //         profileImage: null,
-  //         name: '나일론',
-  //       },
-  //     ],
-  //   },
-  // ]);
-
   const [decodedResults, setDecodedResults] = useState([]);
 
   const [isMedicine, setIsMedicine] = useState(false);
