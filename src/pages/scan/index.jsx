@@ -18,6 +18,8 @@ import {
   Tooltip,
   Grid,
   IconButton,
+  Autocomplete,
+  Chip,
 } from '@mui/material';
 import React, { useState } from 'react';
 import Html5QrcodePlugin from '../../components/scan/Html5QrcodePlugin';
@@ -52,7 +54,7 @@ const Scan = () => {
   const [selected, setSelected] = useState(() => new Set());
 
   const [openself, setOpenself] = useState(false);
-  const [form, setForm] = useState({ title: '', materials: '', allergics: '' });
+  const [form, setForm] = useState({ title: '', materials: [], allergics: [] });
 
   const [decodedResults, setDecodedResults] = useState([]);
 
@@ -111,7 +113,6 @@ const Scan = () => {
   const handleSubmitCustomized = async () => {
     const { title, materials, allergics } = form;
     const res = await submitCustomized(title, materials, allergics);
-    console.log(res);
 
     if (res.status >= 400) {
       toast.error(res.data.message);
@@ -171,7 +172,14 @@ const Scan = () => {
         </Button>
         <Grid container spacing={1}>
           <Grid item xs>
-            <Button fullWidth variant="contained" color="secondary" sx={{ mt: 2 }} onClick={() => setOpenself(true)}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="secondary"
+              sx={{ mt: 2 }}
+              onClick={() => setOpenself(true)}
+              disabled={isMedicine}
+            >
               직접 등록하기
             </Button>
           </Grid>
@@ -243,16 +251,15 @@ const Scan = () => {
         <DialogTitle>
           <Grid sx={{ display: 'flex', alignItems: 'center' }}>
             <Grid item>
-              직접 등록하기
-              <Typography></Typography>
+              <Typography>직접 등록하기</Typography>
             </Grid>
             <Grid item>
               <Button
                 onClick={() =>
                   setForm({
                     title: '',
-                    materials: '',
-                    allergics: '',
+                    materials: [],
+                    allergics: [],
                   })
                 }
               >
@@ -262,23 +269,46 @@ const Scan = () => {
           </Grid>
         </DialogTitle>
         <DialogContent>
-          <Box>
+          <Box sx={{ pt: 1, maxHeight: `calc(100vh - 300px)` }}>
             <TextField
-              placeholder="제품명"
+              label="제품명"
               fullWidth
               value={form.title}
               onChange={(e) => setForm((v) => ({ ...v, title: e.target.value }))}
             />
-            <TextField
-              placeholder="원재료 목록을 작성하세요. (예: 가,나,다)"
-              multiline
-              fullWidth
-              rows={4}
+            <Autocomplete
               sx={{ mt: 2 }}
+              multiple
+              freeSolo
+              options={[]}
               value={form.materials}
-              onChange={(e) => setForm((v) => ({ ...v, materials: e.target.value }))}
+              renderTags={(value, props) => {
+                return value.map((option, index) => {
+                  return <Chip label={option} {...props({ index })} />;
+                });
+              }}
+              renderInput={(params) => <TextField label="원재료 목록" {...params} placeholder="입력 후 엔터" />}
+              onChange={(e, newValue) => {
+                setForm((v) => ({ ...v, materials: newValue }));
+              }}
             />
-            <TextField
+            <Autocomplete
+              sx={{ mt: 2 }}
+              multiple
+              freeSolo
+              options={[]}
+              value={form.allergics}
+              renderTags={(value, props) => {
+                return value.map((option, index) => {
+                  return <Chip label={option} {...props({ index })} />;
+                });
+              }}
+              renderInput={(params) => <TextField label="알레르기 항목" {...params} placeholder="입력 후 엔터" />}
+              onChange={(e, newValue) => {
+                setForm((v) => ({ ...v, allergics: newValue }));
+              }}
+            />
+            {/* <TextField
               placeholder="알레르기 유발 가능한 항목을 여기에 작성하세요."
               multiline
               fullWidth
@@ -286,7 +316,7 @@ const Scan = () => {
               sx={{ mt: 2 }}
               value={form.allergics}
               onChange={(e) => setForm((v) => ({ ...v, allergics: e.target.value }))}
-            />
+            /> */}
           </Box>
         </DialogContent>
         <DialogActions>

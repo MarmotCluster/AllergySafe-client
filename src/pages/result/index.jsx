@@ -8,6 +8,53 @@ const ScanResult = () => {
   /* hooks */
   const { scanResult } = useScan();
 
+  /* renders */
+  const renderFriends = () => {
+    return scanResult.friendList.map(({ category, items }, index) => {
+      return (
+        <React.Fragment key={index}>
+          <Typography variant="body2">{category}</Typography>
+          {items.map((jtem, jndex) => {
+            const { id, profileImage, name, allergics } = jtem;
+            return (
+              <Card key={id}>
+                <CardContent>
+                  <Box>
+                    <Box display="flex" alignItems="center">
+                      <Avatar />
+                      <Typography sx={{ ml: 2 }}>{name}</Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        border: '1px solid #e0e0e0',
+                        borderRadius: 2,
+                        mt: 2,
+                        p: 2,
+                        textAlign: 'center',
+                      }}
+                    >
+                      <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                        {allergics ? (
+                          allergics.map((item, index) => {
+                            return (
+                              <Chip key={index} label={item} sx={{ color: 'white', bgcolor: 'rgba(255,0,0,0.8)' }} />
+                            );
+                          })
+                        ) : (
+                          <Typography>해당 항목이 없어요.</Typography>
+                        )}
+                      </Stack>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </React.Fragment>
+      );
+    });
+  };
+
   return (
     <Box sx={{ m: 2, mb: 12 }}>
       <Typography variant="h5">식품(의약품) 정보</Typography>
@@ -36,7 +83,15 @@ const ScanResult = () => {
         </Typography>
         <Card>
           <CardContent>
-            <Typography>여기에는 무엇이 들어가야 되니?</Typography>
+            {scanResult.antigens?.length > 0 ? (
+              <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                {scanResult.antigens.map((item, index) => {
+                  return <Chip key={index} label={item} />;
+                })}
+              </Stack>
+            ) : (
+              <Typography>해당 항목이 없어요.</Typography>
+            )}
           </CardContent>
         </Card>
 
@@ -64,58 +119,7 @@ const ScanResult = () => {
           🚨
         </Typography>
         <Box sx={{ textAlign: 'left', bgcolor: '#f4f4f4', borderRadius: 2, p: 2, '& > *:not(:last-child)': { mb: 2 } }}>
-          <Typography variant="body2">까떼고리 0</Typography>
-
-          <Card>
-            <CardContent>
-              <Box>
-                <Box display="flex" alignItems="center">
-                  <Avatar />
-                  <Typography sx={{ ml: 2 }}>에이담 게릭스</Typography>
-                </Box>
-                <Box
-                  sx={{
-                    border: '1px solid #e0e0e0',
-                    borderRadius: 2,
-                    mt: 2,
-                    p: 2,
-                    textAlign: 'center',
-                    color: '#ff0000',
-                  }}
-                >
-                  <Typography variant="h5" fontWeight={700}>
-                    돼지고기 알레르기 유발 가능
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent>
-              <Box>
-                <Box display="flex" alignItems="center">
-                  <Avatar />
-                  <Typography sx={{ ml: 2 }}>에이담 게릭스</Typography>
-                </Box>
-                <Box
-                  sx={{
-                    border: '1px solid #e0e0e0',
-                    borderRadius: 2,
-                    mt: 2,
-                    p: 2,
-                    textAlign: 'center',
-                    color: '#ff0000',
-                  }}
-                >
-                  <Typography variant="h5" fontWeight={700}>
-                    돼지고기 알레르기 유발 가능
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-          {/* 카테고리 끝 */}
+          {renderFriends()}
         </Box>
       </Box>
 

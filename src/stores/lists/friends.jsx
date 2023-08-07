@@ -8,7 +8,7 @@ export const friendListState = atom({
   key: 'friendListState',
   default: [
     {
-      category: '나',
+      category: '가족',
       items: [
         {
           id: 0,
@@ -18,7 +18,7 @@ export const friendListState = atom({
       ],
     },
     {
-      category: '까떼고리 0',
+      category: '친구',
       items: [
         {
           id: 1,
