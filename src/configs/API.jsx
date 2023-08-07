@@ -8,6 +8,7 @@ const API = {
   },
   SCAN: {
     search: `/search`,
+    post: `/selfpost`,
   },
   LIST: {
     friend: `/list/friends`,

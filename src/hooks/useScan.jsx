@@ -20,7 +20,20 @@ const useScan = () => {
     return getResponseUsable(res);
   };
 
-  return { search, scanResult };
+  /**
+   *
+   * @param {string} title
+   * @param {string} materials
+   * @param {string} allergics
+   */
+  const submitCustomized = async (title, materials, allergics) => {
+    let res = await refresh(REST.POST, API.SCAN.post, undefined, { title, materials, allergics });
+    res = getResponseUsable(res);
+    console.log(res);
+    return res;
+  };
+
+  return { search, submitCustomized, scanResult };
 };
 
 export default useScan;

@@ -15,6 +15,9 @@ import {
   Divider,
   Avatar,
   Checkbox,
+  Tooltip,
+  Grid,
+  IconButton,
 } from '@mui/material';
 import React, { useState } from 'react';
 import Html5QrcodePlugin from '../../components/scan/Html5QrcodePlugin';
@@ -26,6 +29,7 @@ import useScan from '../../hooks/useScan';
 
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useNavigate } from 'react-router-dom';
 import useList from '@mui/base/useList/useList';
 import { friendListState } from '../../stores/lists/friends';
@@ -37,7 +41,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const Scan = () => {
   /* hooks */
   const navigate = useNavigate();
-  const { search } = useScan();
+  const { search, submitCustomized } = useScan();
 
   /* stores */
   const [global, setGlobal] = useRecoilState(globalState);
@@ -46,6 +50,10 @@ const Scan = () => {
   /* states */
   const [open, setOpen] = useState(true);
   const [selected, setSelected] = useState(() => new Set());
+
+  const [openself, setOpenself] = useState(false);
+  const [form, setForm] = useState({ title: '', materials: '', allergics: '' });
+
   const [decodedResults, setDecodedResults] = useState([]);
 
   const [isMedicine, setIsMedicine] = useState(false);
@@ -90,10 +98,23 @@ const Scan = () => {
     try {
       setGlobal((v) => ({ ...v, loading: true }));
       const res = await search(serial);
+      if (res.status >= 400) {
+        toast.error(res.data.message);
+      }
     } catch (err) {
       toast.error('나중에 다시 시도하세요.');
     } finally {
       setGlobal((v) => ({ ...v, loading: false }));
+    }
+  };
+
+  const handleSubmitCustomized = async () => {
+    const { title, materials, allergics } = form;
+    const res = await submitCustomized(title, materials, allergics);
+    console.log(res);
+
+    if (res.status >= 400) {
+      toast.error(res.data.message);
     }
   };
 
@@ -148,17 +169,37 @@ const Scan = () => {
         <Button fullWidth variant="outlined" sx={{ mt: 2 }} onClick={() => setOpen(true)} disabled={open}>
           {`검사할 사람 (${selected.size})...`}
         </Button>
+        <Grid container spacing={1}>
+          <Grid item xs>
+            <Button fullWidth variant="contained" color="secondary" sx={{ mt: 2 }} onClick={() => setOpenself(true)}>
+              직접 등록하기
+            </Button>
+          </Grid>
+          <Grid item sx={{ mt: 2 }}>
+            <Tooltip title={'바코드가 없는 식품이면 직접 등록하세요.'}>
+              <Button>
+                <HelpOutlineIcon />
+              </Button>
+            </Tooltip>
+          </Grid>
+        </Grid>
         <Box>
-          <FormControlLabel
-            value="start"
-            control={<Switch color="primary" onChange={(e) => setIsMedicine(e.target.checked)} value={isMedicine} />}
-            label="의약품"
-            labelPlacement="start"
-          />
+          <Tooltip title={`스캔하고자 하는 품목이 의약품이면 스위치를 활성화하세요.`}>
+            <FormControlLabel
+              value="start"
+              control={<Switch color="primary" onChange={(e) => setIsMedicine(e.target.checked)} value={isMedicine} />}
+              label="의약품"
+              labelPlacement="start"
+            />
+          </Tooltip>
         </Box>
         <Box sx={{ minHeight: 'calc(100vh - 240px)' }}>
-          <Html5QrcodePlugin fps={10} qrbox={250} disableFlip={false} qrCodeSuccessCallback={onNewScanResult} />
-          {/* <ResultContainerPlugin results={decodedResults} /> */}
+          {selected.size > 0 && !open && !openself && (
+            <>
+              <Html5QrcodePlugin fps={10} qrbox={250} disableFlip={false} qrCodeSuccessCallback={onNewScanResult} />
+              {/* <ResultContainerPlugin results={decodedResults} /> */}
+            </>
+          )}
         </Box>
         <Box>
           <TextField
@@ -171,7 +212,7 @@ const Scan = () => {
             helperText={error.serial && `카메라로 스캔하거나 여기에 직접 입력하세요.`}
           />
           <Button variant="contained" size="large" fullWidth sx={{ mt: 2, mb: 5 }} onClick={handleSubmit}>
-            검색하기
+            검색하기?
           </Button>
         </Box>
         <Box height={80} />
@@ -194,6 +235,66 @@ const Scan = () => {
         <DialogActions>
           <Button onClick={handleClose} fullWidth variant="contained">
             {selected.size === 0 ? '뒤로가기' : `선택완료 (${selected.size})`}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openself} TransitionComponent={Transition} keepMounted fullWidth onClose={() => setOpenself(false)}>
+        <DialogTitle>
+          <Grid sx={{ display: 'flex', alignItems: 'center' }}>
+            <Grid item>
+              직접 등록하기
+              <Typography></Typography>
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={() =>
+                  setForm({
+                    title: '',
+                    materials: '',
+                    allergics: '',
+                  })
+                }
+              >
+                초기화
+              </Button>
+            </Grid>
+          </Grid>
+        </DialogTitle>
+        <DialogContent>
+          <Box>
+            <TextField
+              placeholder="제품명"
+              fullWidth
+              value={form.title}
+              onChange={(e) => setForm((v) => ({ ...v, title: e.target.value }))}
+            />
+            <TextField
+              placeholder="원재료 목록을 작성하세요. (예: 가,나,다)"
+              multiline
+              fullWidth
+              rows={4}
+              sx={{ mt: 2 }}
+              value={form.materials}
+              onChange={(e) => setForm((v) => ({ ...v, materials: e.target.value }))}
+            />
+            <TextField
+              placeholder="알레르기 유발 가능한 항목을 여기에 작성하세요."
+              multiline
+              fullWidth
+              rows={4}
+              sx={{ mt: 2 }}
+              value={form.allergics}
+              onChange={(e) => setForm((v) => ({ ...v, allergics: e.target.value }))}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button fullWidth variant="contained" onClick={handleSubmitCustomized}>
+            등록하기
+          </Button>
+          <Button fullWidth onClick={() => setOpenself(false)}>
+            취소
           </Button>
         </DialogActions>
       </Dialog>

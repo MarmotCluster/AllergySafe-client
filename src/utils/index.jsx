@@ -42,7 +42,7 @@ export const getYupErrorMessages = ({ path, message, inner }: YupErrorMessage) =
  * @param {'get' | 'post' | 'put' | 'delete'} method
  * @param {string} address
  * @param {AxiosRequestConfig<any>=} config
- * @param {any=} data
+ * @param {any=} data this used in method 'POST' and 'PUT' only.
  * @returns {Promise<ResponseUsable>}
  */
 export const refresh = (method, address, config, data) => {
@@ -77,7 +77,8 @@ export const refresh = (method, address, config, data) => {
         if (err instanceof AxiosError) {
           if (err.response?.data) {
             const { error_code, message } = err.response.data;
-            if (err.response.status === 401 /* && message === '토큰이 만료되었습니다.'*/) {
+            // ... case if token has expired
+            if (err.response.status === 401) {
               if (!refreshToken) return { status: 400, data: { message: 'TOKEN_NOT_FOUND' } };
 
               try {
@@ -118,6 +119,9 @@ export const refresh = (method, address, config, data) => {
   return result;
 };
 
+/**
+ *  use this when request to server using direct server object.
+ */
 export const tryCatchResponse = (func: () => Promise<ResponseUsable>): Promise<ResponseUsable> => {
   try {
     return new Promise((resolve) => {
