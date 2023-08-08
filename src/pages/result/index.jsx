@@ -3,6 +3,7 @@ import useScan from '../../hooks/useScan';
 import { Avatar, Box, Button, Card, CardContent, Chip, Divider, Stack, Typography } from '@mui/material';
 
 import QrCode2Icon from '@mui/icons-material/QrCode2';
+import { getTextColorForBackground } from '../../utils';
 
 const ScanResult = () => {
   /* hooks */
@@ -36,8 +37,26 @@ const ScanResult = () => {
                       <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                         {allergics ? (
                           allergics.map((item, index) => {
+                            const [r, g, b] = [
+                              Math.round(Math.random() * 255),
+                              // .toString(16)
+                              // .padStart(2, '0'),
+                              Math.round(Math.random() * 255),
+                              // .toString(16)
+                              // .padStart(2, '0'),
+                              Math.round(Math.random() * 255),
+                              // .toString(16)
+                              // .padStart(2, '0'),
+                            ];
                             return (
-                              <Chip key={index} label={item} sx={{ color: 'white', bgcolor: 'rgba(255,0,0,0.8)' }} />
+                              <Chip
+                                key={index}
+                                label={item}
+                                sx={{
+                                  color: getTextColorForBackground({ r, g, b }),
+                                  bgcolor: `rgba(${r},${g},${b},0.8)`,
+                                }}
+                              />
                             );
                           })
                         ) : (
@@ -73,7 +92,18 @@ const ScanResult = () => {
           <CardContent>
             <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
               {scanResult.ingredients.map((item, index) => {
-                return <Chip key={index} label={item} />;
+                const [r, g, b] = [
+                  Math.round(Math.random() * 255),
+                  Math.round(Math.random() * 255),
+                  Math.round(Math.random() * 255),
+                ];
+                return (
+                  <Chip
+                    key={index}
+                    label={item}
+                    sx={{ color: getTextColorForBackground({ r, g, b }), bgcolor: `rgba(${r},${g},${b},0.8)` }}
+                  />
+                );
               })}
             </Stack>
           </CardContent>
@@ -86,7 +116,18 @@ const ScanResult = () => {
             {scanResult.antigens?.length > 0 ? (
               <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                 {scanResult.antigens.map((item, index) => {
-                  return <Chip key={index} label={item} />;
+                  const [r, g, b] = [
+                    Math.round(Math.random() * 255),
+                    Math.round(Math.random() * 255),
+                    Math.round(Math.random() * 255),
+                  ];
+                  return (
+                    <Chip
+                      key={index}
+                      label={item}
+                      sx={{ color: getTextColorForBackground({ r, g, b }), bgcolor: `rgba(${r},${g},${b},0.8)` }}
+                    />
+                  );
                 })}
               </Stack>
             ) : (
@@ -110,8 +151,8 @@ const ScanResult = () => {
               fontSize: 'inherit',
               background: '#CF0000',
               background: `linear-gradient(to right, #EA4C46 0%, #A6110E 100%)`,
-              '-webkit-background-clip': 'text',
-              '-webkit-text-fill-color': 'transparent',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
             }}
           >
             알레르기 경보!

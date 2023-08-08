@@ -170,3 +170,25 @@ export const getRandomHexColor = () => {
     Math.random() * 255
   ).toString(16)}`;
 };
+
+/**
+ * Calculates the recommended text color (white or black) for a given background color
+ * based on legibility.
+ *
+ * @param {string | {r:number,g:number,b:number}} backgroundColor - The background color in hexadecimal format (e.g., "#RRGGBB" or "{r:RR,g:GG,b:BB}").
+ * @returns {'black' | 'white'} The recommended text color: "white" or "black".
+ */
+export const getTextColorForBackground = (backgroundColor) => {
+  const isString = typeof backgroundColor === 'string';
+
+  // Convert the background color to its RGB components
+  const r = isString ? parseInt(backgroundColor.substr(1, 2), 16) : backgroundColor.r;
+  const g = isString ? parseInt(backgroundColor.substr(3, 2), 16) : backgroundColor.g;
+  const b = isString ? parseInt(backgroundColor.substr(5, 2), 16) : backgroundColor.b;
+
+  // Calculate the luminance of the background color
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  // Determine if white or black text would be more legible
+  return luminance > 0.5 ? 'black' : 'white';
+};
