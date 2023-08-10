@@ -5,6 +5,9 @@ import useAuth from '../../hooks/useAuth';
 import { useRecoilState } from 'recoil';
 import { globalState } from '../../stores/global/atom';
 import { toast } from 'react-hot-toast';
+import server from '../../configs/server';
+import API from '../../configs/API';
+import axios from 'axios';
 
 const Login = () => {
   /* hooks */
@@ -14,8 +17,8 @@ const Login = () => {
   const [global, setGlobal] = useRecoilState(globalState);
 
   /* states */
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
+  const [id, setId] = useState('example@example.com');
+  const [password, setPassword] = useState('abcd1234@');
   const [errorId, setErrorId] = useState(false);
   const [errorPassword, setErrorPassword] = useState(false);
 
@@ -28,7 +31,6 @@ const Login = () => {
   const handleSubmit = async (e) => {
     let hasError = false;
     e.preventDefault();
-    console.log({ id, password });
 
     if (!id) {
       hasError = true;
@@ -47,8 +49,9 @@ const Login = () => {
     try {
       setGlobal((v) => ({ ...v, loading: true }));
       const result = await login({ email: id, password });
+      console.log(result);
     } catch (err) {
-      toast.error('나중에 다시 시도해 주세요.');
+      toast.error('나중에 다시 시도하세요.');
     } finally {
       setGlobal((v) => ({ ...v, loading: false }));
     }

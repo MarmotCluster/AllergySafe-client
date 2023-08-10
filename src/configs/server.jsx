@@ -1,5 +1,11 @@
 import axios from 'axios';
 
-export default axios.create({
-  baseURL: 'https://www.test.com',
+const server = axios.create({
+  baseURL: 'https://allergysafe.life/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
+server.defaults.headers.post['Content-Type'] = `application/x-www-form-urlencoded`;
+
+export default server;

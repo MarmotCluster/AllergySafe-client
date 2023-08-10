@@ -60,7 +60,7 @@ const Register = () => {
       setGlobal((v) => ({ ...v, loading: true }));
       const result = await register({ username, email, password, passwordcheck: confirm });
     } catch (err) {
-      toast.error('나중에 다시 시도해 주세요.');
+      toast.error('나중에 다시 시도하세요.');
     } finally {
       setGlobal((v) => ({ ...v, loading: false }));
     }

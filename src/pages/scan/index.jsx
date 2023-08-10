@@ -174,7 +174,7 @@ const Scan = () => {
           <Grid item xs>
             <Button
               fullWidth
-              variant="contained"
+              variant="outlined"
               color="secondary"
               sx={{ mt: 2 }}
               onClick={() => setOpenself(true)}

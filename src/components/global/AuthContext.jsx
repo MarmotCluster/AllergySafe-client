@@ -9,7 +9,7 @@ const AuthContext = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { me, logout } = useAuth();
+  const { me, logout, test } = useAuth();
 
   const [auth, setAuth] = useRecoilState(authState);
 
@@ -36,9 +36,11 @@ const AuthContext = () => {
     const init = async () => {
       const res = await me(true);
 
-      // console.log(res);
+      console.log(res);
       if (!res || res.status >= 400) {
         logout();
+      } else if (res.status === 200) {
+        setAuth((v) => ({ ...v, isSignedIn: true }));
       }
     };
 

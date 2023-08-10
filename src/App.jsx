@@ -12,16 +12,30 @@ import zIndex from '@mui/material/styles/zIndex';
 const App = () => {
   return (
     <BrowserRouter>
-      <Toaster position="bottom-center" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            border: 'none',
+            borderRadius: 100,
+            userSelect: 'none',
+            pointerEvents: 'none',
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            color: 'white',
+          },
+        }}
+      />
       <Loading />
       <AuthContext />
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        {navigation.map(({ path, element }, index) => {
-          return <Route {...{ key: index, path, element }} />;
-        })}
-      </Routes>
+      <Box sx={{ minWidth: 400, position: 'relative', height: '100vh' }}>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          {navigation.map(({ path, element }, index) => {
+            return <Route {...{ key: index, path, element }} />;
+          })}
+        </Routes>
+      </Box>
     </BrowserRouter>
   );
 };

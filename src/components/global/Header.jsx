@@ -1,4 +1,4 @@
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, useTheme } from '@mui/material';
 import zIndex from '@mui/material/styles/zIndex';
 import React, { useEffect } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import CoronavirusRoundedIcon from '@mui/icons-material/CoronavirusRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import { useRecoilState } from 'recoil';
 import { authState } from '../../stores/auth/atom';
+import { toast } from 'react-hot-toast';
 
 /**
  *
@@ -19,7 +20,12 @@ const SingleMenu = (props) => {
   const { activated, children, onClick } = props;
   return (
     <Box sx={{ display: 'inline-block', width: 'calc(100% / 4 - 28px)', minWidth: 70 }}>
-      <IconButton size="large" onClick={onClick} sx={{ width: 70, height: 70 }}>
+      <IconButton
+        size="large"
+        onClick={onClick}
+        sx={{ width: 70, height: 70 }}
+        color={activated ? 'primary' : 'default'}
+      >
         {children}
       </IconButton>
     </Box>
@@ -27,15 +33,26 @@ const SingleMenu = (props) => {
 };
 
 const Header = () => {
+  const theme = useTheme();
+
   const navigate = useNavigate();
 
   const location = useLocation();
 
   const [auth, setAuth] = useRecoilState(authState);
 
-  useEffect(() => {
-    console.log(location.pathname);
-  }, [location]);
+  /**
+   *
+   * @param {string} to relative path
+   */
+  const hopTo = (to) => {
+    !auth.isSignedIn && toast('로그인 후에 이용하세요.');
+    return auth.isSignedIn ? to : '/login';
+  };
+
+  // useEffect(() => {
+  //   console.log(location.pathname);
+  // }, [location]);
 
   return (
     <>
@@ -57,14 +74,15 @@ const Header = () => {
       >
         <Box
           component={RouterLink}
-          to="/scan"
+          to={auth.isSignedIn ? '/scan' : '/login'}
+          onClick={() => hopTo('/scan')}
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             width: 112,
             height: 86,
-            background: 'linear-gradient(315deg, rgba(216,158,255,1) 0%, rgba(90,42,164,1) 100%)',
+            background: `linear-gradient(315deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
             position: 'absolute',
             left: '50%',
             bottom: 0,
@@ -75,20 +93,23 @@ const Header = () => {
           <DocumentScannerIcon sx={{ width: 48, height: 48, color: '#fafafa' }} />
         </Box>
         <Box sx={{ width: '100%', textAlign: 'center' }}>
-          <SingleMenu onClick={() => navigate('/')}>
+          <SingleMenu activated={location.pathname === '/'} onClick={() => navigate('/')}>
             <HomeRoundedIcon fontSize="large" />
           </SingleMenu>
-          <SingleMenu onClick={() => navigate('/diary')}>
+          <SingleMenu activated={location.pathname.includes('/diary')} onClick={() => navigate(hopTo('/diary'))}>
             <NoteAltRoundedIcon fontSize="large" />
           </SingleMenu>
           <Box sx={{ display: 'inline-block', width: 112 }}></Box>
-          <SingleMenu onClick={() => navigate('/profile')}>
+          <SingleMenu activated={location.pathname.includes('/profile')} onClick={() => navigate(hopTo('/profile'))}>
             <CoronavirusRoundedIcon fontSize="large" />
           </SingleMenu>
           <SingleMenu
+            activated={
+              (auth.isSignedIn && location.pathname.includes('/account')) ||
+              (!auth.isSignedIn && location.pathname.includes('/login'))
+            }
             onClick={() => {
-              // return auth.isSignedIn ? navigate('/account') : navigate('/login');
-              return auth.isSignedIn ? navigate('/login') : navigate('/account');
+              return auth.isSignedIn ? navigate('/account') : navigate('/login');
             }}
           >
             <AccountCircleRoundedIcon fontSize="large" />

@@ -16,7 +16,7 @@ const theme = createTheme({
       main: '#5A2AA4',
     },
     secondary: {
-      main: '#D89EFF',
+      main: '#f400ee',
     },
     warning: {
       main: orange[400],

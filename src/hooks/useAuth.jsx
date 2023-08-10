@@ -3,6 +3,7 @@ import API from '../configs/API';
 import server from '../configs/server';
 import { authState } from '../stores/auth/atom';
 import { getResponseUsable, refresh, REST, tryCatchResponse } from '../utils';
+import axios from 'axios';
 
 /**
  * @typedef {Object} LoginProps
@@ -30,10 +31,10 @@ const useAuth = () => {
     return await tryCatchResponse(async () => {
       const res = await server.post(API.AUTH.login, { email, password });
 
-      window.localStorage.setItem('accessToken', res.data.access_token);
-      if (remeberMe) {
-        window.localStorage.setItem('refreshToken', res.data.refresh_token);
-      }
+      window.localStorage.setItem('accessToken', res.data.token);
+      // if (remeberMe) {
+      //   window.localStorage.setItem('refreshToken', res.data.refresh_token);
+      // }
 
       setAuth((state) => ({ ...state, isSignedIn: true }));
 
@@ -60,7 +61,12 @@ const useAuth = () => {
     // }
   };
 
-  return { me, login, logout, register };
+  const test = async () => {
+    const res = await server.get(API.HEALTH.health);
+    console.log(res);
+  };
+
+  return { me, login, logout, register, test };
 };
 
 export default useAuth;
