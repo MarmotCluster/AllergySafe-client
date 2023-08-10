@@ -1,0 +1,59 @@
+name: React Deploymeny Test
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        # npm cache files are stored in `~/.npm` on Linux/macOS
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
+    
+    - name: Set node version
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.17
+    
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build
+      run: unset CI && npm run build
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.5.4
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    
+    - name: Add remote server to known hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+    
+    - name: Execute remote commands
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SERVER_PORT }}
+        script: |
+          sudo rm -rf /var/www/allergysafe.life/html
+          sudo mkdir -p /var/www/allergysafe.life/html
+          sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} /var/www/allergysafe.life/html
+          
+      
+    - name: Transfer builded files via rsync
+      run: rsync -aprtz -e 'ssh -p ${{ secrets.SERVER_PORT }}' ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/var/www/allergysafe.life/html
