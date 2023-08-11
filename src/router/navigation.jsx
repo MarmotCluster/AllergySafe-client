@@ -5,6 +5,7 @@ import Register from '../pages/register';
 import Diary from '../pages/diary';
 import Account from '../pages/account';
 import ScanResult from '../pages/result';
+import AllergyProfiles from '../pages/profiles';
 
 /** contain paths that should not direct on logged in */
 export const ACCESS_DENY_ON_SIGNED_IN = ['/login', , '/register'];
@@ -32,6 +33,10 @@ const navigation = [
   {
     path: '/register',
     element: <Register />,
+  },
+  {
+    path: '/profile',
+    element: <AllergyProfiles />,
   },
   {
     path: '/scan',

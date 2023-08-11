@@ -1,6 +1,6 @@
 import { Box, Button, Container, Link, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { useRecoilState } from 'recoil';
 import { globalState } from '../../stores/global/atom';
@@ -11,6 +11,7 @@ import axios from 'axios';
 
 const Login = () => {
   /* hooks */
+  const navigate = useNavigate();
   const { login, register } = useAuth();
 
   /* stores */
@@ -49,7 +50,12 @@ const Login = () => {
     try {
       setGlobal((v) => ({ ...v, loading: true }));
       const result = await login({ email: id, password });
-      console.log(result);
+      if (result.status >= 400) {
+        toast.error(result.data.message);
+      } else {
+        toast('어서오세요 !');
+        navigate('/', { replace: true });
+      }
     } catch (err) {
       toast.error('나중에 다시 시도하세요.');
     } finally {

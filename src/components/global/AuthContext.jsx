@@ -36,7 +36,6 @@ const AuthContext = () => {
     const init = async () => {
       const res = await me(true);
 
-      console.log(res);
       if (!res || res.status >= 400) {
         logout();
       } else if (res.status === 200) {

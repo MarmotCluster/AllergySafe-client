@@ -8,6 +8,7 @@ import NoteAltRoundedIcon from '@mui/icons-material/NoteAltRounded';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import CoronavirusRoundedIcon from '@mui/icons-material/CoronavirusRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import ContactsIcon from '@mui/icons-material/Contacts';
 import { useRecoilState } from 'recoil';
 import { authState } from '../../stores/auth/atom';
 import { toast } from 'react-hot-toast';
@@ -23,7 +24,7 @@ const SingleMenu = (props) => {
       <IconButton
         size="large"
         onClick={onClick}
-        sx={{ width: 70, height: 70 }}
+        sx={{ width: 60, height: 60 }}
         color={activated ? 'primary' : 'default'}
       >
         {children}
@@ -64,7 +65,7 @@ const Header = () => {
           left: 0,
           minWidth: 400,
           width: '100vw',
-          height: 74,
+          height: 60,
           boxShadow: `0 -3px 64px rgba(0,0,0,0.16)`,
           display: 'flex',
           alignItems: 'center',
@@ -81,27 +82,28 @@ const Header = () => {
             alignItems: 'center',
             justifyContent: 'center',
             width: 112,
-            height: 86,
+            height: 72,
             background: `linear-gradient(315deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
             position: 'absolute',
             left: '50%',
             bottom: 0,
             transform: 'translateX(-50%)',
-            borderRadius: '14px 14px 0 0',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
           }}
         >
           <DocumentScannerIcon sx={{ width: 48, height: 48, color: '#fafafa' }} />
         </Box>
         <Box sx={{ width: '100%', textAlign: 'center' }}>
           <SingleMenu activated={location.pathname === '/'} onClick={() => navigate('/')}>
-            <HomeRoundedIcon fontSize="large" />
+            <HomeRoundedIcon sx={{ width: 32, height: 32 }} />
           </SingleMenu>
           <SingleMenu activated={location.pathname.includes('/diary')} onClick={() => navigate(hopTo('/diary'))}>
-            <NoteAltRoundedIcon fontSize="large" />
+            <NoteAltRoundedIcon sx={{ width: 32, height: 32 }} />
           </SingleMenu>
           <Box sx={{ display: 'inline-block', width: 112 }}></Box>
           <SingleMenu activated={location.pathname.includes('/profile')} onClick={() => navigate(hopTo('/profile'))}>
-            <CoronavirusRoundedIcon fontSize="large" />
+            <ContactsIcon sx={{ width: 32, height: 32 }} />
           </SingleMenu>
           <SingleMenu
             activated={
@@ -112,7 +114,7 @@ const Header = () => {
               return auth.isSignedIn ? navigate('/account') : navigate('/login');
             }}
           >
-            <AccountCircleRoundedIcon fontSize="large" />
+            <AccountCircleRoundedIcon sx={{ width: 32, height: 32 }} />
           </SingleMenu>
         </Box>
       </Box>

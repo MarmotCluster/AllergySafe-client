@@ -20,6 +20,7 @@ import {
   IconButton,
   Autocomplete,
   Chip,
+  InputAdornment,
 } from '@mui/material';
 import React, { useState } from 'react';
 import Html5QrcodePlugin from '../../components/scan/Html5QrcodePlugin';
@@ -35,6 +36,8 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useNavigate } from 'react-router-dom';
 import useList from '@mui/base/useList/useList';
 import { friendListState } from '../../stores/lists/friends';
+
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
@@ -121,42 +124,49 @@ const Scan = () => {
 
   /* renders */
   const renderList = () => {
-    return friends.map((item, index) => {
-      const { category, items } = item;
+    const koreanTitle = {
+      family: '가족',
+      friend: '친구',
+    };
 
+    return Object.keys(friends).map((key, index) => {
       return (
-        <React.Fragment key={index}>
+        <React.Fragment key={key}>
           <Typography variant="body2" sx={{ mt: index > 0 && 2 }}>
-            {category}
+            {koreanTitle[key] ? koreanTitle[key] : key}
           </Typography>
 
-          {items.map((jtem, jndex) => {
-            const { id, profileImage, name } = jtem;
+          {friends[key].length > 0 ? (
+            friends[key].map((jtem, jndex) => {
+              const { id, profileImage, name } = jtem;
 
-            return (
-              <Box key={jndex} sx={{ display: 'flex', my: 2, justifyContent: 'space-between' }}>
-                <Box display="flex" alignItems="center">
-                  <Avatar src={profileImage && profileImage} />
-                  <Typography variant="body" sx={{ ml: 2 }}>
-                    {name}
-                  </Typography>
+              return (
+                <Box key={jndex} sx={{ display: 'flex', my: 2, justifyContent: 'space-between' }}>
+                  <Box display="flex" alignItems="center">
+                    <Avatar src={profileImage && profileImage} />
+                    <Typography variant="body" sx={{ ml: 2 }}>
+                      {name} {jndex === 0 && `(나)`}
+                    </Typography>
+                  </Box>
+                  <Checkbox
+                    icon={<RadioButtonUncheckedIcon />}
+                    checkedIcon={<RadioButtonCheckedIcon />}
+                    checked={selected.has(id)}
+                    onChange={(e) =>
+                      setSelected((v) => {
+                        const next = new Set(v);
+                        const checked = next.has(id);
+                        !checked ? next.add(id) : next.delete(id);
+                        return next;
+                      })
+                    }
+                  />
                 </Box>
-                <Checkbox
-                  icon={<RadioButtonUncheckedIcon />}
-                  checkedIcon={<RadioButtonCheckedIcon />}
-                  checked={selected.has(id)}
-                  onChange={(e) =>
-                    setSelected((v) => {
-                      const next = new Set(v);
-                      const checked = next.has(id);
-                      !checked ? next.add(id) : next.delete(id);
-                      return next;
-                    })
-                  }
-                />
-              </Box>
-            );
-          })}
+              );
+            })
+          ) : (
+            <Typography sx={{ textAlign: 'center', m: 2, color: '#999' }}>목록이 비었어요.</Typography>
+          )}
 
           <Divider />
         </React.Fragment>
@@ -218,9 +228,16 @@ const Scan = () => {
             onChange={(e) => setSerial(e.target.value)}
             error={error.serial}
             helperText={error.serial && `카메라로 스캔하거나 여기에 직접 입력하세요.`}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <QrCode2Icon />
+                </InputAdornment>
+              ),
+            }}
           />
           <Button variant="contained" size="large" fullWidth sx={{ mt: 2, mb: 5 }} onClick={handleSubmit}>
-            검색하기?
+            검색하기
           </Button>
         </Box>
         <Box height={80} />

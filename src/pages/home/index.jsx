@@ -53,7 +53,7 @@ const Home = () => {
   }, [cardref]);
 
   return (
-    <Box sx={{ m: 2, pb: '74px' }}>
+    <Box sx={{ m: 2, pb: 10 }}>
       <Box name="topbar" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography>알레르기 항원 추론</Typography>
         <Box sx={{ display: 'flex' }}>
@@ -588,17 +588,21 @@ const Home = () => {
 
         <Box sx={{ mt: 3, bgcolor: '#e0e0e0', p: 3, borderRadius: 5 }}>
           <Typography>일시</Typography>
-          <Typography variant="h3" textAlign="center">
+          <Typography variant="h4" textAlign="center">
             12.25.2023
           </Typography>
-          <Divider sx={{ my: 2, bgcolor: '#ccc' }} />
+        </Box>
+
+        <Box sx={{ mt: 3, bgcolor: '#e0e0e0', p: 3, borderRadius: 5 }}>
           <Typography>음식</Typography>
-          <Typography variant="h3" textAlign="center">
+          <Typography variant="h4" textAlign="center">
             밀
           </Typography>
-          <Divider sx={{ my: 2, bgcolor: '#ccc' }} />
+        </Box>
+
+        <Box sx={{ mt: 3, bgcolor: '#e0e0e0', p: 3, borderRadius: 5 }}>
           <Typography>알레르기 종류</Typography>
-          <Typography variant="h3" textAlign="center">
+          <Typography variant="h4" textAlign="center">
             WDEIA
           </Typography>
         </Box>

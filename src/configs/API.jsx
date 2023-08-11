@@ -50,7 +50,7 @@ const API = {
     /** POST/{profileId}, DELETE/{profileId} */
     element: `/user/profile/element`,
     /** POST, DELETE/{profileId} */
-    family: `/user/pofile/family`,
+    family: `/user/profile/family`,
     /** GET */
     profileMe: `/user/profile/me`,
     /** GET/{profileId} */
