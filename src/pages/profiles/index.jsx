@@ -1,4 +1,15 @@
-import { Avatar, Box, Button, Dialog, Divider, IconButton, Slide, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  Avatar,
+  Box,
+  Button,
+  Dialog,
+  Divider,
+  IconButton,
+  Slide,
+  TextField,
+  Typography,
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import useList from '../../hooks/useList';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -15,6 +26,7 @@ import { toast } from 'react-hot-toast';
 
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
+import { autocompleteState } from '../../stores/lists/autocompletes';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -23,14 +35,21 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const AllergyProfiles = () => {
   /* stores */
   const contacts = useRecoilValue(friendListState);
+
+  const options = useRecoilValue(autocompleteState);
+
   const auth = useRecoilValue(authState);
+
   const [global, setGlobal] = useRecoilState(globalState);
 
   /* states */
   const [selected, setSelected] = useState(-1);
+
   /**@type {[Person, React.Dispatch<React.SetStateAction<Person>>]} */
   const [data, setData] = useState({});
+
   const [askDelete, setAskDelete] = useState(false);
+
   const [adding, setAdding] = useState({
     family: false,
     friend: false,
@@ -38,6 +57,7 @@ const AllergyProfiles = () => {
     allergies: false,
     ingredients: false,
   });
+
   const [newName, setNewname] = useState({
     family: '',
     friend: '',
@@ -45,6 +65,7 @@ const AllergyProfiles = () => {
     allergies: '',
     ingredients: '',
   });
+
   const [disabled, setDisabled] = useState(false);
 
   /* hooks */
@@ -174,11 +195,11 @@ const AllergyProfiles = () => {
                     foundAt = categories[i];
                     found = contacts[foundAt].find((ii) => ii.id === target);
                     if (found) {
-                      setData({ ...found, category: foundAt });
+                      console.log({ category: foundAt, ...found });
+                      setData({ category: foundAt, ...found });
                       break;
                     }
                   }
-                  console.log({ ...found, category: foundAt });
                   return target;
                 });
               };
@@ -302,8 +323,8 @@ const AllergyProfiles = () => {
                 </React.Fragment>
               );
             })}
-            {data?.category === 'family' && (
-              <Button color="inherit" fullWidth>
+            {data?.category === 'family' && !adding.materials ? (
+              <Button color="inherit" fullWidth onClick={() => setAdding((v) => ({ ...v, materials: true }))}>
                 <Box
                   sx={{
                     p: 1,
@@ -319,6 +340,24 @@ const AllergyProfiles = () => {
                   <Typography sx={{ ml: 1.6 }} variant="body2">{`추가 또는 제거`}</Typography>
                 </Box>
               </Button>
+            ) : (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                <Autocomplete
+                  disablePortal
+                  options={options.materials}
+                  getOptionDisabled={(option) => Boolean(data.materials.find((item) => item.id === option.id))}
+                  fullWidth
+                  renderInput={(params) => <TextField {...params} label="식품 원재료" size="small" />}
+                  sx={{ p: 2, pr: 0 }}
+                  onChange={(e, newValue) => setNewname((v) => ({ ...v, materials: newValue.label }))}
+                />
+                <Button sx={{ height: 40 }}>
+                  <CheckIcon />
+                </Button>
+                <Button sx={{ height: 40, mr: 2 }} onClick={() => setAdding((v) => ({ ...v, materials: false }))}>
+                  <ClearIcon />
+                </Button>
+              </Box>
             )}
           </Box>
 

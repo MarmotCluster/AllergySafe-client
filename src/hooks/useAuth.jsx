@@ -17,12 +17,13 @@ const useAuth = () => {
   const [auth, setAuth] = useRecoilState(authState);
 
   /* hooks */
-  const { getContacts } = useList();
+  const { getContacts, getAutocompletes } = useList();
 
   const me = async (isCalledInAuthContext = false) => {
     const res = await refresh(REST.GET, API.USER.me);
     if (res.status === 200 && isCalledInAuthContext) {
       getContacts();
+      getAutocompletes();
       setAuth((state) => ({ ...state, isSignedIn: true, userData: res.data }));
     }
     return res;

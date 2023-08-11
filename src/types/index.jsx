@@ -30,3 +30,14 @@
  *      items:Friend[]
  * }} FriendList
  */
+
+/**
+ * @typedef {{id:number, label?:string, name?:string}} APIStaticItemDefault
+ */
+
+/**
+ * @typedef {Object} AutocompleteList
+ * @property {APIStaticItemDefault[]} materials
+ * @property {APIStaticItemDefault[]} allergies
+ * @property {APIStaticItemDefault[]} ingredients
+ */

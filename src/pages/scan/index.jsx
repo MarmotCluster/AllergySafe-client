@@ -145,7 +145,7 @@ const Scan = () => {
                   <Box display="flex" alignItems="center">
                     <Avatar src={profileImage && profileImage} />
                     <Typography variant="body" sx={{ ml: 2 }}>
-                      {name} {jndex === 0 && `(나)`}
+                      {name} {key === 'family' && jndex === 0 && `(나)`}
                     </Typography>
                   </Box>
                   <Checkbox
