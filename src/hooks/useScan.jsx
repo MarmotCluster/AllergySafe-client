@@ -11,24 +11,12 @@ const useScan = () => {
 
   /**
    *
-   * @param {string} serial
+   * @param {number} id
    * @param {boolean} isMedicine
    * @param {number[]} profileList
+   * @returns {Promise<typeof resultState>}
    */
-  const search = async (serial, isMedicine, profileIdList) => {
-    let res;
-    res = isMedicine
-      ? await refresh(REST.GET, API.SCANNER.medicine, { params: { barcode: serial } })
-      : await refresh(REST.GET, API.SCANNER.food, { params: { barcode: serial } });
-    res = getResponseUsable(res);
-
-    if (String(res.status)[0] !== '2') {
-      console.log(res);
-      return res;
-    }
-
-    const id = res.data.id;
-
+  const searchById = async (id, isMedicine, profileIdList) => {
     const seongboons = isMedicine
       ? await refresh(REST.GET, `${API.MEDICINE.medicine}/${id}`)
       : await refresh(REST.GET, `${API.FOOD.food}/${id}`);
@@ -58,15 +46,43 @@ const useScan = () => {
 
   /**
    *
+   * @param {string} serial
+   * @param {boolean} isMedicine
+   * @param {number[]} profileList
+   */
+  const search = async (serial, isMedicine, profileIdList) => {
+    let res;
+    res = isMedicine
+      ? await refresh(REST.GET, API.SCANNER.medicine, { params: { barcode: serial } })
+      : await refresh(REST.GET, API.SCANNER.food, { params: { barcode: serial } });
+    res = getResponseUsable(res);
+
+    if (String(res.status)[0] !== '2') {
+      console.log(res);
+      return res;
+    }
+
+    const id = res.data.id;
+    return await searchById(id, isMedicine, profileIdList);
+  };
+
+  /**
+   *
    * @param {string} title
    * @param {string} materials
    * @param {string} allergics
+   * @param {number[]} profileList
    */
-  const submitCustomized = async (title, materials, allergics) => {
-    let res = await refresh(REST.POST, API.SCAN.post, undefined, { title, materials, allergics });
+  const submitCustomized = async (name, materials, allergies, profileIdList) => {
+    let res = await refresh(REST.POST, API.FOOD.food, undefined, { name, materials, allergies });
     res = getResponseUsable(res);
-    console.log(res);
-    return res;
+    if (String(res.status)[0] !== '2') {
+      console.log(res);
+      return res;
+    }
+
+    const id = res.data.id;
+    return await searchById(id, false, profileIdList);
   };
 
   return { search, submitCustomized, scanResult };

@@ -1,13 +1,12 @@
+import { Box } from '@mui/material';
 import React from 'react';
 import { Toaster } from 'react-hot-toast';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AuthContext from './components/global/AuthContext';
+import Header from './components/global/Header';
+import Loading from './components/global/Loading';
 import Home from './pages/home';
 import navigation from './router/navigation';
-import Header from './components/global/Header';
-import { Container, Box } from '@mui/material';
-import Loading from './components/global/Loading';
-import zIndex from '@mui/material/styles/zIndex';
 
 const App = () => {
   return (

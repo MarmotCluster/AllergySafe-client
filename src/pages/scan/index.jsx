@@ -22,7 +22,7 @@ import {
   Chip,
   InputAdornment,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Html5QrcodePlugin from '../../components/scan/Html5QrcodePlugin';
 import ResultContainerPlugin from '../../components/scan/ResultContainerPlugin';
 import { useRecoilState } from 'recoil';
@@ -118,12 +118,41 @@ const Scan = () => {
 
   const handleSubmitCustomized = async () => {
     const { title, materials, allergics } = form;
-    const res = await submitCustomized(title, materials, allergics);
 
-    if (res.status >= 400) {
-      toast.error(res.data.message);
+    try {
+      setGlobal((v) => ({ ...v, loading: true }));
+      const res = await submitCustomized(title, materials, allergics, Array.from(selected));
+      if (res.status >= 400) {
+        toast.error(res.data.message);
+        setOpenself(true);
+      } else if (String(res.status)[0] === '2') {
+        navigate('/result');
+      }
+    } catch (err) {
+      toast.error('나중에 다시 시도하세요.');
+    } finally {
+      setGlobal((v) => ({ ...v, loading: false }));
     }
   };
+
+  /* effects */
+  useEffect(() => {
+    /**
+     *
+     * @param {React.KeyboardEvent} e
+     */
+    const handler = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('keydown', handler);
+
+    return () => {
+      document.removeEventListener('keydown', handler);
+    };
+  }, [openself]);
 
   /* renders */
   const renderList = () => {
@@ -299,7 +328,7 @@ const Scan = () => {
             <Autocomplete
               sx={{ mt: 2 }}
               multiple
-              freeSolo
+              // freeSolo
               options={[]}
               value={form.materials}
               renderTags={(value, props) => {
@@ -307,7 +336,24 @@ const Scan = () => {
                   return <Chip label={option} {...props({ index })} />;
                 });
               }}
-              renderInput={(params) => <TextField label="원재료 목록" {...params} placeholder="입력 후 엔터" />}
+              renderInput={(params) => (
+                <TextField
+                  label="원재료 목록"
+                  {...params}
+                  placeholder="입력 후 스페이스"
+                  onChange={(e) => {
+                    if (e.target.value.length === 0) return;
+
+                    if (e.target.value[e.target.value.length - 1] === ' ') {
+                      setForm((v) => ({
+                        ...v,
+                        materials: [...v.materials, e.target.value.substring(0, e.target.value.length - 1)],
+                      }));
+                      e.target.value = '';
+                    }
+                  }}
+                />
+              )}
               onChange={(e, newValue) => {
                 setForm((v) => ({ ...v, materials: newValue }));
               }}
@@ -315,7 +361,7 @@ const Scan = () => {
             <Autocomplete
               sx={{ mt: 2 }}
               multiple
-              freeSolo
+              // freeSolo
               options={[]}
               value={form.allergics}
               renderTags={(value, props) => {
@@ -323,20 +369,28 @@ const Scan = () => {
                   return <Chip label={option} {...props({ index })} />;
                 });
               }}
-              renderInput={(params) => <TextField label="알레르기 항목" {...params} placeholder="입력 후 엔터" />}
+              renderInput={(params) => (
+                <TextField
+                  label="알레르기 항목"
+                  {...params}
+                  placeholder="입력 후 엔터"
+                  onChange={(e) => {
+                    if (e.target.value.length === 0) return;
+
+                    if (e.target.value[e.target.value.length - 1] === ' ') {
+                      setForm((v) => ({
+                        ...v,
+                        allergics: [...v.allergics, e.target.value.substring(0, e.target.value.length - 1)],
+                      }));
+                      e.target.value = '';
+                    }
+                  }}
+                />
+              )}
               onChange={(e, newValue) => {
                 setForm((v) => ({ ...v, allergics: newValue }));
               }}
             />
-            {/* <TextField
-              placeholder="알레르기 유발 가능한 항목을 여기에 작성하세요."
-              multiline
-              fullWidth
-              rows={4}
-              sx={{ mt: 2 }}
-              value={form.allergics}
-              onChange={(e) => setForm((v) => ({ ...v, allergics: e.target.value }))}
-            /> */}
           </Box>
         </DialogContent>
         <DialogActions>

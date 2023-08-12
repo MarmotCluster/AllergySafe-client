@@ -128,7 +128,9 @@ const ScanResult = () => {
       <Box sx={{ mt: 8, textAlign: 'center' }}>
         <Typography display="flex" alignItems="center" justifyContent="center">
           <QrCode2Icon fontSize="small" />
-          <Typography component="span">코드: {scanResult.barcode}</Typography>
+          <Typography component="span">
+            코드: {scanResult.barcode ? scanResult.barcode : '직접 등록한 항목이에요.'}
+          </Typography>
         </Typography>
         <Typography sx={{ fontWeight: 900, fontSize: 32 }}>{scanResult.name}</Typography>
         <Typography variant="body2">원재료명</Typography>
