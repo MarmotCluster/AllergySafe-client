@@ -62,7 +62,7 @@ const Scan = () => {
   const [decodedResults, setDecodedResults] = useState([]);
 
   const [isMedicine, setIsMedicine] = useState(false);
-  const [serial, setSerial] = useState('');
+  const [serial, setSerial] = useState('8801045520124'); // 진라면 static for temporal
   const [error, setError] = useState({ serial: false });
 
   /* functions */
@@ -102,9 +102,12 @@ const Scan = () => {
 
     try {
       setGlobal((v) => ({ ...v, loading: true }));
-      const res = await search(serial);
+      const res = await search(serial, isMedicine, Array.from(selected));
       if (res.status >= 400) {
         toast.error(res.data.message);
+        setOpenself(true);
+      } else if (String(res.status)[0] === '2') {
+        navigate('/result');
       }
     } catch (err) {
       toast.error('나중에 다시 시도하세요.');

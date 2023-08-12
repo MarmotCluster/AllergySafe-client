@@ -12,7 +12,7 @@ const API = {
   },
   FOOD: {
     /** POST, GET/{foodId} */
-    food: `/allergy`,
+    food: `/food`,
   },
   HEALTH: {
     /** GET */
@@ -57,6 +57,8 @@ const API = {
     profileShare: `/user/profile/share`,
     /** GET */
     validate: `/user/validate`,
+    /** POST */
+    profileElement: `/user/profile/element`,
   },
 };
 

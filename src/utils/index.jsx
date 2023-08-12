@@ -56,6 +56,7 @@ export const refresh = (method, address, config, data) => {
       try {
         if (method === REST.GET || method === REST.DELETE) {
           res = await server[method](address, {
+            data,
             ...config,
             headers: {
               ...config?.headers,

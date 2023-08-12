@@ -61,20 +61,55 @@ const AllergyProfiles = () => {
   const [newName, setNewname] = useState({
     family: '',
     friend: '',
-    materials: '',
-    allergies: '',
-    ingredients: '',
+    materials: { label: null, id: null },
+    allergies: { label: null, id: null },
+    ingredients: { label: null, id: null },
   });
 
   const [disabled, setDisabled] = useState(false);
 
   /* hooks */
-  const { getContacts, addFamily, deleteFromFamily, addFriend, deleteFromFriend } = useList();
+  const { getContacts, addFamily, deleteFromFamily, addFriend, deleteFromFriend, postElement, removeElement } =
+    useList();
 
   /* functions */
   const closeSelected = () => {
     setSelected(-1);
     setAskDelete(false);
+    setAdding({
+      family: false,
+      friend: false,
+      materials: false,
+      allergies: false,
+      ingredients: false,
+    });
+    setNewname({
+      family: '',
+      friend: '',
+      materials: { label: null, id: null },
+      allergies: { label: null, id: null },
+      ingredients: { label: null, id: null },
+    });
+  };
+
+  /**
+   *
+   * @param {number} id
+   */
+  const refreshList = async (id) => {
+    try {
+      const res = await getContacts();
+      if (String(res.status)[0] === '2') {
+        let found;
+        found = res.data.family.find((item) => item.id === id);
+        if (found) {
+          setData({ category: 'family', ...found });
+          return;
+        }
+
+        setData({ category: 'friend', ...res.data.friend.find((item) => item.id === id) });
+      }
+    } catch (err) {}
   };
 
   /* effects */
@@ -232,7 +267,7 @@ const AllergyProfiles = () => {
         <Box sx={{ pb: 12 }}>{renderContacts()}</Box>
       </Box>
       <Dialog fullScreen open={selected !== -1} TransitionComponent={Transition}>
-        <Box sx={{ bgcolor: '#f4f4f4', width: '100%', height: '100%', p: 2 }}>
+        <Box sx={{ bgcolor: '#f4f4f4', width: '100%', height: '100%', p: 2, maxHeight: '100vh', overflowY: 'scroll' }}>
           <Box name="header" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <IconButton onClick={closeSelected}>
               <ArrowBackIosNewRoundedIcon />
@@ -246,7 +281,7 @@ const AllergyProfiles = () => {
               </IconButton>
               <IconButton
                 color="error"
-                onClick={() => setAskDelete(true)}
+                onClick={() => setAskDelete((v) => !v)}
                 disalbed={auth.userData?.name === data?.name}
               >
                 <DeleteIcon />
@@ -318,47 +353,110 @@ const AllergyProfiles = () => {
             {data?.materials?.map((item, index) => {
               return (
                 <React.Fragment key={item.id}>
-                  <Typography sx={{ p: 2 }}>{item.name}</Typography>
+                  <Box sx={{ px: 2, py: 1.2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography>{item.name}</Typography>
+                    {data.category === 'family' && (
+                      <IconButton
+                        color="default"
+                        onClick={async () => {
+                          try {
+                            setGlobal((v) => ({ ...v, loading: true }));
+                            const res = await removeElement(data.id, 'material', {
+                              profileElementType: 'material',
+                              id: item.id,
+                            });
+
+                            if (res.status >= 400) {
+                              toast.error(res.data.message);
+                            } else if (String(res.status)[0] === '2') {
+                              toast('삭제되었어요.');
+                              refreshList(data.id);
+                            }
+                          } catch (err) {
+                            toast.error('나중에 다시 시도하세요.');
+                          } finally {
+                            setGlobal((v) => ({ ...v, loading: false }));
+                          }
+                        }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
+                  </Box>
                   <Divider />
                 </React.Fragment>
               );
             })}
-            {data?.category === 'family' && !adding.materials ? (
-              <Button color="inherit" fullWidth onClick={() => setAdding((v) => ({ ...v, materials: true }))}>
-                <Box
-                  sx={{
-                    p: 1,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '100%',
-                    color: '#ccc',
-                    minHeight: 44,
-                  }}
-                >
-                  <AddCircleIcon sx={{ color: 'inherit' }} />
-                  <Typography sx={{ ml: 1.6 }} variant="body2">{`추가 또는 제거`}</Typography>
-                </Box>
-              </Button>
-            ) : (
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                <Autocomplete
-                  disablePortal
-                  options={options.materials}
-                  getOptionDisabled={(option) => Boolean(data.materials.find((item) => item.id === option.id))}
-                  fullWidth
-                  renderInput={(params) => <TextField {...params} label="식품 원재료" size="small" />}
-                  sx={{ p: 2, pr: 0 }}
-                  onChange={(e, newValue) => setNewname((v) => ({ ...v, materials: newValue.label }))}
-                />
-                <Button sx={{ height: 40 }}>
-                  <CheckIcon />
-                </Button>
-                <Button sx={{ height: 40, mr: 2 }} onClick={() => setAdding((v) => ({ ...v, materials: false }))}>
-                  <ClearIcon />
-                </Button>
-              </Box>
-            )}
+            {(function () {
+              if (data.category === 'family') {
+                if (adding.materials === false) {
+                  return (
+                    <Button color="inherit" fullWidth onClick={() => setAdding((v) => ({ ...v, materials: true }))}>
+                      <Box
+                        sx={{
+                          p: 1,
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%',
+                          color: '#ccc',
+                          minHeight: 44,
+                        }}
+                      >
+                        <AddCircleIcon sx={{ color: 'inherit' }} />
+                        <Typography sx={{ ml: 1.6 }} variant="body2">{`추가하기`}</Typography>
+                      </Box>
+                    </Button>
+                  );
+                }
+
+                return (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                    <Autocomplete
+                      disablePortal
+                      options={options.materials}
+                      getOptionDisabled={(option) => Boolean(data.materials.find((item) => item.id === option.id))}
+                      fullWidth
+                      renderInput={(params) => <TextField {...params} label="식품 원재료" size="small" />}
+                      sx={{ p: 2, pr: 0 }}
+                      onChange={(e, newValue) => setNewname((v) => ({ ...v, materials: newValue }))}
+                      value={newName.materials.label}
+                    />
+                    <Button
+                      sx={{ height: 40 }}
+                      onClick={async () => {
+                        if (!newName.materials.label) return;
+
+                        try {
+                          setGlobal((v) => ({ ...v, loading: true }));
+                          const res = await postElement(data.id, 'material', {
+                            profileElementType: 'material',
+                            id: newName.materials.id,
+                          });
+
+                          if (res.status >= 400) {
+                            toast.error(res.data.message);
+                          } else if (String(res.status)[0] === '2') {
+                            toast('추가되었어요.');
+                            setNewname((v) => ({ ...v, materials: { label: null, id: null } }));
+                            refreshList(data.id);
+                          }
+                        } catch (err) {
+                          toast.error('나중에 다시 시도하세요.');
+                        } finally {
+                          setGlobal((v) => ({ ...v, loading: false }));
+                        }
+                      }}
+                    >
+                      <CheckIcon />
+                    </Button>
+                    <Button sx={{ height: 40, mr: 2 }} onClick={() => setAdding((v) => ({ ...v, materials: false }))}>
+                      <ClearIcon />
+                    </Button>
+                  </Box>
+                );
+              }
+            })()}
           </Box>
 
           <Typography variant="body2" sx={{ mt: 3 }}>
@@ -369,29 +467,110 @@ const AllergyProfiles = () => {
             {data?.allergies?.map((item, index) => {
               return (
                 <React.Fragment key={item.id}>
-                  <Typography sx={{ p: 2 }}>{item.name}</Typography>
+                  <Box sx={{ px: 2, py: 1.2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography>{item.name}</Typography>
+                    {data.category === 'family' && (
+                      <IconButton
+                        color="default"
+                        onClick={async () => {
+                          try {
+                            setGlobal((v) => ({ ...v, loading: true }));
+                            const res = await removeElement(data.id, 'allergy', {
+                              profileElementType: 'allergy',
+                              id: item.id,
+                            });
+
+                            if (res.status >= 400) {
+                              toast.error(res.data.message);
+                            } else if (String(res.status)[0] === '2') {
+                              toast('삭제되었어요.');
+                              refreshList(data.id);
+                            }
+                          } catch (err) {
+                            toast.error('나중에 다시 시도하세요.');
+                          } finally {
+                            setGlobal((v) => ({ ...v, loading: false }));
+                          }
+                        }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
+                  </Box>
                   <Divider />
                 </React.Fragment>
               );
             })}
-            {data?.category === 'family' && (
-              <Button color="inherit" fullWidth>
-                <Box
-                  sx={{
-                    p: 1,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '100%',
-                    color: '#ccc',
-                    minHeight: 44,
-                  }}
-                >
-                  <AddCircleIcon sx={{ color: 'inherit' }} />
-                  <Typography sx={{ ml: 1.6 }} variant="body2">{`추가 또는 제거`}</Typography>
-                </Box>
-              </Button>
-            )}
+            {(function () {
+              if (data.category === 'family') {
+                if (adding.allergies === false) {
+                  return (
+                    <Button color="inherit" fullWidth onClick={() => setAdding((v) => ({ ...v, allergies: true }))}>
+                      <Box
+                        sx={{
+                          p: 1,
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%',
+                          color: '#ccc',
+                          minHeight: 44,
+                        }}
+                      >
+                        <AddCircleIcon sx={{ color: 'inherit' }} />
+                        <Typography sx={{ ml: 1.6 }} variant="body2">{`추가하기`}</Typography>
+                      </Box>
+                    </Button>
+                  );
+                }
+
+                return (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                    <Autocomplete
+                      disablePortal
+                      options={options.allergies}
+                      getOptionDisabled={(option) => Boolean(data.allergies.find((item) => item.id === option.id))}
+                      fullWidth
+                      renderInput={(params) => <TextField {...params} label="식품 원재료" size="small" />}
+                      sx={{ p: 2, pr: 0 }}
+                      onChange={(e, newValue) => setNewname((v) => ({ ...v, allergies: newValue }))}
+                      value={newName.allergies.label}
+                    />
+                    <Button
+                      sx={{ height: 40 }}
+                      onClick={async () => {
+                        if (!newName.allergies.label) return;
+
+                        try {
+                          setGlobal((v) => ({ ...v, loading: true }));
+                          const res = await postElement(data.id, 'allergy', {
+                            profileElementType: 'allergy',
+                            id: newName.allergies.id,
+                          });
+
+                          if (res.status >= 400) {
+                            toast.error(res.data.message);
+                          } else if (String(res.status)[0] === '2') {
+                            toast('추가되었어요.');
+                            setNewname((v) => ({ ...v, allergies: { label: null, id: null } }));
+                            refreshList(data.id);
+                          }
+                        } catch (err) {
+                          toast.error('나중에 다시 시도하세요.');
+                        } finally {
+                          setGlobal((v) => ({ ...v, loading: false }));
+                        }
+                      }}
+                    >
+                      <CheckIcon />
+                    </Button>
+                    <Button sx={{ height: 40, mr: 2 }} onClick={() => setAdding((v) => ({ ...v, allergies: false }))}>
+                      <ClearIcon />
+                    </Button>
+                  </Box>
+                );
+              }
+            })()}
           </Box>
 
           <Typography variant="body2" sx={{ mt: 3 }}>
@@ -402,29 +581,110 @@ const AllergyProfiles = () => {
             {data?.ingredients?.map((item, index) => {
               return (
                 <React.Fragment key={item.id}>
-                  <Typography sx={{ p: 2 }}>{item.name}</Typography>
-                  {data.ingredients.length > 1 && <Divider />}
+                  <Box sx={{ px: 2, py: 1.2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography>{item.name}</Typography>
+                    {data.category === 'family' && (
+                      <IconButton
+                        color="default"
+                        onClick={async () => {
+                          try {
+                            setGlobal((v) => ({ ...v, loading: true }));
+                            const res = await removeElement(data.id, 'ingredient', {
+                              profileElementType: 'ingredient',
+                              id: item.id,
+                            });
+
+                            if (res.status >= 400) {
+                              toast.error(res.data.message);
+                            } else if (String(res.status)[0] === '2') {
+                              toast('삭제되었어요.');
+                              refreshList(data.id);
+                            }
+                          } catch (err) {
+                            toast.error('나중에 다시 시도하세요.');
+                          } finally {
+                            setGlobal((v) => ({ ...v, loading: false }));
+                          }
+                        }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
+                  </Box>
+                  <Divider />
                 </React.Fragment>
               );
             })}
-            {data?.category === 'family' && (
-              <Button color="inherit" fullWidth>
-                <Box
-                  sx={{
-                    p: 1,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '100%',
-                    color: '#ccc',
-                    minHeight: 44,
-                  }}
-                >
-                  <AddCircleIcon sx={{ color: 'inherit' }} />
-                  <Typography sx={{ ml: 1.6 }} variant="body2">{`추가 또는 제거`}</Typography>
-                </Box>
-              </Button>
-            )}
+            {(function () {
+              if (data.category === 'family') {
+                if (adding.ingredients === false) {
+                  return (
+                    <Button color="inherit" fullWidth onClick={() => setAdding((v) => ({ ...v, ingredients: true }))}>
+                      <Box
+                        sx={{
+                          p: 1,
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%',
+                          color: '#ccc',
+                          minHeight: 44,
+                        }}
+                      >
+                        <AddCircleIcon sx={{ color: 'inherit' }} />
+                        <Typography sx={{ ml: 1.6 }} variant="body2">{`추가하기`}</Typography>
+                      </Box>
+                    </Button>
+                  );
+                }
+
+                return (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                    <Autocomplete
+                      disablePortal
+                      options={options.ingredients}
+                      getOptionDisabled={(option) => Boolean(data.ingredients.find((item) => item.id === option.id))}
+                      fullWidth
+                      renderInput={(params) => <TextField {...params} label="식품 원재료" size="small" />}
+                      sx={{ p: 2, pr: 0 }}
+                      onChange={(e, newValue) => setNewname((v) => ({ ...v, ingredients: newValue }))}
+                      value={newName.ingredients.label}
+                    />
+                    <Button
+                      sx={{ height: 40 }}
+                      onClick={async () => {
+                        if (!newName.ingredients.label) return;
+
+                        try {
+                          setGlobal((v) => ({ ...v, loading: true }));
+                          const res = await postElement(data.id, 'ingredient', {
+                            profileElementType: 'ingredient',
+                            id: newName.ingredients.id,
+                          });
+
+                          if (res.status >= 400) {
+                            toast.error(res.data.message);
+                          } else if (String(res.status)[0] === '2') {
+                            toast('추가되었어요.');
+                            setNewname((v) => ({ ...v, ingredients: { label: null, id: null } }));
+                            refreshList(data.id);
+                          }
+                        } catch (err) {
+                          toast.error('나중에 다시 시도하세요.');
+                        } finally {
+                          setGlobal((v) => ({ ...v, loading: false }));
+                        }
+                      }}
+                    >
+                      <CheckIcon />
+                    </Button>
+                    <Button sx={{ height: 40, mr: 2 }} onClick={() => setAdding((v) => ({ ...v, ingredients: false }))}>
+                      <ClearIcon />
+                    </Button>
+                  </Box>
+                );
+              }
+            })()}
           </Box>
         </Box>
       </Dialog>

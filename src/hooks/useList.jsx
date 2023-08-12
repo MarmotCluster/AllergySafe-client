@@ -74,7 +74,38 @@ const useList = () => {
     return res;
   };
 
-  return { getContacts, addFamily, deleteFromFamily, addFriend, deleteFromFriend, getAutocompletes };
+  /**
+   *
+   * @param {number} profileId
+   * @param {'allergy' | 'material' | 'ingredient'} where
+   * @param {{profileElementType: 'allergy' | 'material' | 'ingredient', id: number}} req
+   */
+  const postElement = (profileId, where, req) => {
+    const res = refresh(REST.POST, `${API.USER.profileElement}/${profileId}`, undefined, req);
+    return res;
+  };
+
+  /**
+   *
+   * @param {number} profileId
+   * @param {'allergy' | 'material' | 'ingredient'} where
+   * @param {{profileElementType: 'allergy' | 'material' | 'ingredient', id: number}} req
+   */
+  const removeElement = (profileId, where, req) => {
+    const res = refresh(REST.DELETE, `${API.USER.profileElement}/${profileId}`, undefined, req);
+    return res;
+  };
+
+  return {
+    getContacts,
+    addFamily,
+    deleteFromFamily,
+    addFriend,
+    deleteFromFriend,
+    getAutocompletes,
+    postElement,
+    removeElement,
+  };
 };
 
 export default useList;
