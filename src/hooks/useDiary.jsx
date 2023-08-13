@@ -29,7 +29,7 @@ const useDiary = () => {
    * @param {number} profileId
    * @param {string} date
    */
-  const postDiaryByDate = async (profileId, date) => {
+  const createNewDiary = async (profileId, date) => {
     const res = await refresh(REST.POST, `${API.DIARY.deafault}/${profileId}`, undefined, { date });
     return res;
   };
@@ -63,7 +63,45 @@ const useDiary = () => {
     return res;
   };
 
-  return { getDiary, getDiaryByDate, postDiaryByDate, deleteDiaryById, postElementIntoDiary, deleteElementFromDiary };
+  /**
+   *
+   * @param {number} profileId
+   * @param {'food' | 'medicine'} diaryElementType
+   * @param {number} itemId
+   */
+  const writeScannedResultIntoDiary = async (profileId, diaryElementType, itemId) => {
+    const date = new Date();
+    const today = date.toISOString().split('T')[0];
+
+    // ... 금일 일기가 있는지 먼저 확인
+    let diaryId = null;
+    let diaryToday = await getDiaryByDate(profileId, today);
+    if (String(diaryToday.status)[0] === '2') {
+      diaryId = diaryToday.data.id;
+    } else if (diaryToday.status >= 400) {
+      // ... 없으면 생성 후에
+      const created = await createNewDiary(profileId, today);
+      if (created.status >= 400) {
+        return created;
+      }
+
+      diaryId = created.data.id;
+    }
+
+    // ... 일기쓰기
+    const res = await postElementIntoDiary(diaryId, { diaryElementType, id: itemId, dateTime: date.toISOString() });
+    return res;
+  };
+
+  return {
+    getDiary,
+    getDiaryByDate,
+    createNewDiary,
+    deleteDiaryById,
+    postElementIntoDiary,
+    deleteElementFromDiary,
+    writeScannedResultIntoDiary,
+  };
 };
 
 export default useDiary;

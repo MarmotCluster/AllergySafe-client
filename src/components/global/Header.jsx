@@ -1,4 +1,4 @@
-import { Box, IconButton, useTheme } from '@mui/material';
+import { Avatar, Box, IconButton, useTheme } from '@mui/material';
 import zIndex from '@mui/material/styles/zIndex';
 import React, { useEffect } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
@@ -114,7 +114,11 @@ const Header = () => {
               return auth.isSignedIn ? navigate('/account') : navigate('/login');
             }}
           >
-            <AccountCircleRoundedIcon sx={{ width: 32, height: 32 }} />
+            {auth.userData?.imageUrl ? (
+              <Avatar src={auth.userData.imageUrl} sx={{ width: 32, height: 32 }} />
+            ) : (
+              <AccountCircleRoundedIcon sx={{ width: 32, height: 32 }} />
+            )}
           </SingleMenu>
         </Box>
       </Box>

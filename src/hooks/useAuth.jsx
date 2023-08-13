@@ -58,15 +58,21 @@ const useAuth = () => {
 
   /**
    *
-   * @param {any} form
+   * @param {{
+   *  name: string,
+   *  email: string,
+   *  password: string,
+   * }} form
    */
   const register = async (form) => {
-    // try {
-    //   const res = await server.post(API.USER.default, form);
-    //   return getResponseUsable(res);
-    // } catch (err) {
-    //   return getResponseUsable(err.response);
-    // }
+    return await tryCatchResponse(async () => {
+      try {
+        const res = await server.post(API.USER.user, { ...form });
+        return getResponseUsable(res);
+      } catch (err) {
+        return getResponseUsable(err.response);
+      }
+    });
   };
 
   /**
@@ -92,9 +98,9 @@ const useAuth = () => {
     return await tryCatchResponse(async () => {
       try {
         const token = window.localStorage.getItem('accessToken');
-        let res = await axios.post(`https://r2.allergysafe.life`, formData, {
-          params: { token },
+        let res = await axios.post(`https://r2.allergysafe.life/image.png`, formData, {
           headers: { 'Content-Type': 'image/png' },
+          params: { token, mimeType: 'image/png' },
         });
         res = getResponseUsable(res);
 
@@ -111,12 +117,23 @@ const useAuth = () => {
     });
   };
 
+  const doEmailValidate = async (token) => {
+    return await tryCatchResponse(async () => {
+      try {
+        const res = await server.get(API.USER.validate, { params: { token } });
+        return getResponseUsable(res);
+      } catch (err) {
+        return getResponseUsable(err.response);
+      }
+    });
+  };
+
   const test = async () => {
     // const res = await server.get(API.HEALTH.health);
     // console.log(res);
   };
 
-  return { me, login, logout, register, test, changePassword, changeProfileImage };
+  return { me, login, logout, register, test, doEmailValidate, changePassword, changeProfileImage };
 };
 
 export default useAuth;

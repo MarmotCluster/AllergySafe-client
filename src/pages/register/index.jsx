@@ -1,6 +1,6 @@
 import { Box, Button, Container, Link, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { useRecoilState } from 'recoil';
 import { globalState } from '../../stores/global/atom';
@@ -8,6 +8,9 @@ import { toast } from 'react-hot-toast';
 
 const Register = () => {
   /* hooks */
+
+  const navigate = useNavigate();
+
   const { login, register } = useAuth();
 
   /* stores */
@@ -58,7 +61,13 @@ const Register = () => {
 
     try {
       setGlobal((v) => ({ ...v, loading: true }));
-      const result = await register({ username, email, password, passwordcheck: confirm });
+      const res = await register({ name: username, email, password });
+      if (res.status >= 400) {
+        toast.error(res.data.message);
+      } else if (String(res.status)[0] === '2') {
+        toast(res.data.message);
+        navigate('/login', { replace: true });
+      }
     } catch (err) {
       toast.error('나중에 다시 시도하세요.');
     } finally {

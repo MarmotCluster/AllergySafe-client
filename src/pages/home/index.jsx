@@ -25,6 +25,9 @@ import { orange, red } from '@mui/material/colors';
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 
+import EggAltIcon from '@mui/icons-material/EggAlt';
+import MedicationIcon from '@mui/icons-material/Medication';
+
 import IMAGE_WHEAT from '../../assets/images/wheat.jpg';
 
 const Home = () => {
@@ -97,9 +100,21 @@ const Home = () => {
             position: 'absolute',
             width: '100%',
             height: '100%',
+            overflow: 'hidden',
           }}
         >
-          <Box textAlign="right">
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              p: 1,
+              background: `linear-gradient(315deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+            }}
+          ></Box>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <EggAltIcon color="secondary" />
             <Button endIcon={<FlipCameraAndroidIcon />} onClick={() => setIsMedicine(true)}>
               의약품으로..
             </Button>
@@ -216,7 +231,7 @@ const Home = () => {
                 </Box>
               </Box>
             </Box>
-            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: alpha(theme.palette.primary.main, 0.5) }}>
+            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: '#e0e0e0' }}>
               <Box sx={{ width: '65%', borderRadius: 2, height: '100%', bgcolor: theme.palette.secondary.main }}></Box>
             </Box>
           </Box>
@@ -231,7 +246,7 @@ const Home = () => {
                 </Box>
               </Box>
             </Box>
-            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: alpha(theme.palette.primary.main, 0.5) }}>
+            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: '#e0e0e0' }}>
               <Box sx={{ width: '85%', borderRadius: 2, height: '100%', bgcolor: red['500'] }}></Box>
             </Box>
           </Box>
@@ -246,7 +261,7 @@ const Home = () => {
                 </Box>
               </Box>
             </Box>
-            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: alpha(theme.palette.primary.main, 0.5) }}>
+            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: '#e0e0e0' }}>
               <Box sx={{ width: '20%', borderRadius: 2, height: '100%', bgcolor: red['500'] }}></Box>
             </Box>
           </Box>
@@ -261,7 +276,7 @@ const Home = () => {
                 </Box>
               </Box>
             </Box>
-            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: alpha(theme.palette.primary.main, 0.5) }}>
+            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: '#e0e0e0' }}>
               <Box sx={{ width: '45%', borderRadius: 2, height: '100%', bgcolor: orange['500'] }}></Box>
             </Box>
           </Box>
@@ -298,9 +313,21 @@ const Home = () => {
             position: 'absolute',
             width: '100%',
             height: '100%',
+            overflow: 'hidden',
           }}
         >
-          <Box textAlign="right">
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              p: 1,
+              background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+            }}
+          ></Box>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <MedicationIcon color="primary" />
             <Button endIcon={<FlipCameraAndroidIcon />} color="secondary" onClick={() => setIsMedicine(false)}>
               식품으로..
             </Button>
@@ -417,7 +444,7 @@ const Home = () => {
                 </Box>
               </Box>
             </Box>
-            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: alpha(theme.palette.secondary.main, 0.5) }}>
+            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: '#e0e0e0' }}>
               <Box sx={{ width: '65%', borderRadius: 2, height: '100%', bgcolor: theme.palette.secondary.main }}></Box>
             </Box>
           </Box>
@@ -432,7 +459,7 @@ const Home = () => {
                 </Box>
               </Box>
             </Box>
-            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: alpha(theme.palette.secondary.main, 0.5) }}>
+            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: '#e0e0e0' }}>
               <Box sx={{ width: '85%', borderRadius: 2, height: '100%', bgcolor: red['500'] }}></Box>
             </Box>
           </Box>
@@ -447,7 +474,7 @@ const Home = () => {
                 </Box>
               </Box>
             </Box>
-            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: alpha(theme.palette.secondary.main, 0.5) }}>
+            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: '#e0e0e0' }}>
               <Box sx={{ width: '20%', borderRadius: 2, height: '100%', bgcolor: red['500'] }}></Box>
             </Box>
           </Box>
@@ -462,7 +489,7 @@ const Home = () => {
                 </Box>
               </Box>
             </Box>
-            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: alpha(theme.palette.secondary.main, 0.5) }}>
+            <Box sx={{ mt: 1, borderRadius: 2, height: 10, bgcolor: '#e0e0e0' }}>
               <Box sx={{ width: '45%', borderRadius: 2, height: '100%', bgcolor: orange['500'] }}></Box>
             </Box>
           </Box>

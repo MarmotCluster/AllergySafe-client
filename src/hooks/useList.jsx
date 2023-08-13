@@ -4,9 +4,12 @@ import { friendListState } from '../stores/lists/friends';
 import { autocompleteState } from '../stores/lists/autocompletes';
 import { REST, refresh, tryCatchResponse } from '../utils';
 import API from '../configs/API';
+import { authState } from '../stores/auth/atom';
 
 const useList = () => {
   /* stores */
+  const [auth, setAuth] = useRecoilState(authState);
+
   const [friends, setFriends] = useRecoilState(friendListState);
 
   const [options, setOptions] = useRecoilState(autocompleteState);
@@ -15,6 +18,7 @@ const useList = () => {
   const getContacts = async () => {
     const res = await refresh(REST.GET, API.USER.profileMe);
     if (res.status === 200) {
+      setAuth((v) => ({ ...v, userData: { ...v.userData, imageUrl: res.data.family[0].imageUrl } }));
       setFriends({ ...res.data });
     }
     return res;

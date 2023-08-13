@@ -11,6 +11,7 @@ export const authState = atom({
      *  id:number,
      *  isActive:boolean,
      *  name:string,
+     *  imageUrl?: string,
      * } | null}
      */
     userData: null,

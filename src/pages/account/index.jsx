@@ -1,4 +1,16 @@
-import { Avatar, Box, Button, Card, CardContent, Container, Link, TextField, Typography } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Container,
+  Link,
+  TextField,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import React, { useState } from 'react';
 import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +21,9 @@ import { globalState } from '../../stores/global/atom';
 
 const Account = () => {
   /* stores */
+
+  const theme = useTheme();
+
   const [global, setGlobal] = useRecoilState(globalState);
   const { userData } = useRecoilValue(authState);
 
@@ -73,9 +88,15 @@ const Account = () => {
   return (
     <Box sx={{ m: 2 }}>
       <Card sx={{ borderRadius: 5 }}>
+        <CardHeader
+          sx={{
+            p: 1,
+            background: `linear-gradient(315deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+          }}
+        ></CardHeader>
         <CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar />
+            <Avatar src={userData?.imageUrl} />
             <Box sx={{ ml: 2 }}>
               <Typography fontWeight="bold">{userData?.name ? userData.name : '...'}</Typography>
               <Typography variant="body2">{userData?.email}</Typography>
@@ -84,6 +105,7 @@ const Account = () => {
                 onClick={() => {
                   logout();
                   navigate('/login');
+                  toast('로그아웃 되었어요.');
                 }}
                 sx={{ cursor: 'pointer', userSelect: 'none' }}
               >
@@ -96,6 +118,12 @@ const Account = () => {
 
       <Box sx={{ mt: 5 }}>
         <Card sx={{ borderRadius: 5 }}>
+          <CardHeader
+            sx={{
+              p: 1,
+              background: `linear-gradient(315deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+            }}
+          ></CardHeader>
           <CardContent>
             <Typography>비밀번호 바꾸기</Typography>
             <Typography variant="body2">정기적으로 보안 관리를 하세요.</Typography>

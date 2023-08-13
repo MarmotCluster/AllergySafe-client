@@ -102,19 +102,24 @@ const AllergyProfiles = () => {
    * @param {number} id
    */
   const refreshList = async (id) => {
+    console.log('리프레시 리스트 콜드.');
     try {
       const res = await getContacts();
       if (String(res.status)[0] === '2') {
+        console.log('받은 res', res);
         let found;
         found = res.data.family.find((item) => item.id === id);
-        if (found) {
+        if (found !== null) {
           setData({ category: 'family', ...found });
           return;
         }
 
-        setData({ category: 'friend', ...res.data.friend.find((item) => item.id === id) });
+        found = res.data.friend.find((item) => item.id === id);
+        setData({ category: 'friend', ...found });
       }
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   /* effects */
@@ -249,7 +254,7 @@ const AllergyProfiles = () => {
                   <Divider />
                   <Button color="inherit" fullWidth onClick={handleClick}>
                     <Box sx={{ p: 1, display: 'flex', alignItems: 'center', width: '100%' }}>
-                      <Avatar src={data?.imageUrl} />
+                      <Avatar src={item.imageUrl} />
                       <Typography sx={{ ml: 1.6 }}>{name}</Typography>
                     </Box>
                   </Button>
@@ -284,13 +289,11 @@ const AllergyProfiles = () => {
               {/* <IconButton>
                 <EditRoundedIcon />
               </IconButton> */}
-              <IconButton
-                color="error"
-                onClick={() => setAskDelete((v) => !v)}
-                disalbed={auth.userData?.name === data?.name}
-              >
-                <DeleteIcon />
-              </IconButton>
+              {auth.userData?.id !== data?.id && (
+                <IconButton color="error" onClick={() => setAskDelete((v) => !v)}>
+                  <DeleteIcon />
+                </IconButton>
+              )}
             </Box>
           </Box>
 
@@ -351,17 +354,14 @@ const AllergyProfiles = () => {
                 disabled={data?.category !== 'family'}
                 component="label"
                 onChange={async (e) => {
-                  const formData = new FormData();
-                  formData.append('ImageUrl', e.target.files[0]);
-
                   try {
                     setGlobal((v) => ({ ...v, loading: true }));
-                    const res = await changeProfileImage(data.id, formData);
+                    const res = await changeProfileImage(data.id, e.target.files[0]);
                     if (res.status >= 400) {
                       toast.error(res.data.message);
                     } else if (String(res.status)[0] === '2') {
                       toast('변경되었어요.');
-                      getContacts();
+                      refreshList(data.id);
                     }
                   } catch (err) {
                     toast.error('나중에 다시 시도하세요.');

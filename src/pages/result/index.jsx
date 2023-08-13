@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useScan from '../../hooks/useScan';
 import { Avatar, Box, Button, Card, CardContent, Chip, Divider, Stack, Typography } from '@mui/material';
 
@@ -8,13 +8,48 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 import NoteAltIcon from '@mui/icons-material/NoteAlt';
+import useDiary from '../../hooks/useDiary';
+import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { authState } from '../../stores/auth/atom';
+import { globalState } from '../../stores/global/atom';
 
 const ScanResult = () => {
+  /* stores */
+  const auth = useRecoilValue(authState);
+  const [global, setGlobal] = useRecoilState(globalState);
+
   /* routers */
   const navigate = useNavigate();
 
+  /* states */
+  const [isWritten, setIsWritten] = useState(false);
+
   /* hooks */
   const { scanResult } = useScan();
+  const { writeScannedResultIntoDiary } = useDiary();
+
+  /* functions */
+  const handleWrite = async () => {
+    try {
+      setGlobal((v) => ({ ...v, loading: true }));
+      const res = await writeScannedResultIntoDiary(
+        auth.userData?.id,
+        scanResult.isMedicine ? 'medicine' : 'food',
+        scanResult?.id
+      );
+      if (res.status >= 400) {
+        toast.error(res.data.message);
+      } else if (String(res.status)[0] === '2') {
+        toast('일기장에 등록되었어요.');
+        setIsWritten(true);
+      }
+    } catch (err) {
+      toast.error('나중에 다시 시도하세요.');
+    } finally {
+      setGlobal((v) => ({ ...v, loading: false }));
+    }
+  };
 
   /* effects */
   useEffect(() => {
@@ -33,6 +68,7 @@ const ScanResult = () => {
     }
 
     window.addEventListener('beforeunload', handler);
+    console.log(scanResult);
 
     return () => {
       !invalid && window.removeEventListener('beforeunload', handler);
@@ -242,7 +278,15 @@ const ScanResult = () => {
         </Box>
       </Box>
 
-      <Button fullWidth variant="contained" size="large" sx={{ mt: 2 }} startIcon={<NoteAltIcon />}>
+      <Button
+        fullWidth
+        variant="contained"
+        size="large"
+        sx={{ mt: 2 }}
+        startIcon={<NoteAltIcon />}
+        onClick={handleWrite}
+        disabled={isWritten}
+      >
         일기장에 등록하기
       </Button>
     </Box>
