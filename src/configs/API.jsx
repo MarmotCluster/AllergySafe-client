@@ -40,6 +40,14 @@ const API = {
     /** GET */
     medicine: `/scanner/medicine`,
   },
+  DIARY: {
+    /** DELETE/{diaryId}, GET or POST/{profileId} */
+    deafault: `/diary`,
+    /** GET/{period} */
+    period: `/diary/period`,
+    /** POST or DELETE/{diaryId} */
+    element: `diary/element`,
+  },
   USER: {
     /** PUT, POST */
     user: `/user`,
@@ -59,6 +67,8 @@ const API = {
     validate: `/user/validate`,
     /** POST */
     profileElement: `/user/profile/element`,
+    /** POST or DELETE */
+    profileImage: `/user/profile/image`,
   },
 };
 

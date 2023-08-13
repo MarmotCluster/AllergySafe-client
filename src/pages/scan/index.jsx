@@ -170,12 +170,12 @@ const Scan = () => {
 
           {friends[key].length > 0 ? (
             friends[key].map((jtem, jndex) => {
-              const { id, profileImage, name } = jtem;
+              const { id, imageUrl, name } = jtem;
 
               return (
                 <Box key={jndex} sx={{ display: 'flex', my: 2, justifyContent: 'space-between' }}>
                   <Box display="flex" alignItems="center">
-                    <Avatar src={profileImage && profileImage} />
+                    <Avatar src={imageUrl && imageUrl} />
                     <Typography variant="body" sx={{ ml: 2 }}>
                       {name} {key === 'family' && jndex === 0 && `(나)`}
                     </Typography>

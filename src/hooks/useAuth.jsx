@@ -82,12 +82,41 @@ const useAuth = () => {
     return res;
   };
 
+  /**
+   *
+   * @param {number} profileId
+   * @param {FormData} formData
+   * @returns
+   */
+  const changeProfileImage = async (profileId, formData) => {
+    return await tryCatchResponse(async () => {
+      try {
+        const token = window.localStorage.getItem('accessToken');
+        let res = await axios.post(`https://r2.allergysafe.life`, formData, {
+          params: { token },
+          headers: { 'Content-Type': 'image/png' },
+        });
+        res = getResponseUsable(res);
+
+        if (res.status >= 400) {
+          return res;
+        }
+
+        const urlFixed = res.data.url.replace('.undefined', '.png');
+        res = await refresh(REST.POST, `${API.USER.profileImage}/${profileId}`, undefined, { imageUrl: urlFixed });
+        return res;
+      } catch (err) {
+        return getResponseUsable(err.response);
+      }
+    });
+  };
+
   const test = async () => {
     // const res = await server.get(API.HEALTH.health);
     // console.log(res);
   };
 
-  return { me, login, logout, register, test, changePassword };
+  return { me, login, logout, register, test, changePassword, changeProfileImage };
 };
 
 export default useAuth;

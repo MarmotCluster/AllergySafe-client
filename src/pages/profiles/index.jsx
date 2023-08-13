@@ -8,7 +8,9 @@ import {
   IconButton,
   Slide,
   TextField,
+  Tooltip,
   Typography,
+  alpha,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import useList from '../../hooks/useList';
@@ -27,6 +29,7 @@ import { toast } from 'react-hot-toast';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { autocompleteState } from '../../stores/lists/autocompletes';
+import useAuth from '../../hooks/useAuth';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -71,6 +74,8 @@ const AllergyProfiles = () => {
   /* hooks */
   const { getContacts, addFamily, deleteFromFamily, addFriend, deleteFromFriend, postElement, removeElement } =
     useList();
+
+  const { changeProfileImage } = useAuth();
 
   /* functions */
   const closeSelected = () => {
@@ -244,7 +249,7 @@ const AllergyProfiles = () => {
                   <Divider />
                   <Button color="inherit" fullWidth onClick={handleClick}>
                     <Box sx={{ p: 1, display: 'flex', alignItems: 'center', width: '100%' }}>
-                      <Avatar />
+                      <Avatar src={data?.imageUrl} />
                       <Typography sx={{ ml: 1.6 }}>{name}</Typography>
                     </Box>
                   </Button>
@@ -276,9 +281,9 @@ const AllergyProfiles = () => {
               <IconButton>
                 <ShareRoundedIcon />
               </IconButton>
-              <IconButton>
+              {/* <IconButton>
                 <EditRoundedIcon />
-              </IconButton>
+              </IconButton> */}
               <IconButton
                 color="error"
                 onClick={() => setAskDelete((v) => !v)}
@@ -332,16 +337,44 @@ const AllergyProfiles = () => {
               p: 1,
             }}
           >
-            <Avatar
-              sx={{
-                width: 100,
-                height: 100,
-                position: 'absolute',
-                top: 0,
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-              }}
-            />
+            <Tooltip title="이미지 바꾸기">
+              <IconButton
+                sx={{
+                  width: 100,
+                  height: 100,
+                  position: 'absolute',
+                  top: 0,
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  overflow: 'hidden',
+                }}
+                disabled={data?.category !== 'family'}
+                component="label"
+                onChange={async (e) => {
+                  const formData = new FormData();
+                  formData.append('ImageUrl', e.target.files[0]);
+
+                  try {
+                    setGlobal((v) => ({ ...v, loading: true }));
+                    const res = await changeProfileImage(data.id, formData);
+                    if (res.status >= 400) {
+                      toast.error(res.data.message);
+                    } else if (String(res.status)[0] === '2') {
+                      toast('변경되었어요.');
+                      getContacts();
+                    }
+                  } catch (err) {
+                    toast.error('나중에 다시 시도하세요.');
+                  } finally {
+                    setGlobal((v) => ({ ...v, loading: false }));
+                  }
+                }}
+              >
+                <Avatar src={data?.imageUrl} sx={{ width: '100%', height: '100%' }} />
+                <input type="file" accept="image/png, image/gif, image/jpeg" hidden />
+              </IconButton>
+            </Tooltip>
+
             <Typography sx={{ fontWeight: 900 }}>{data.name ? data.name : 'Unknown'}</Typography>
           </Box>
 

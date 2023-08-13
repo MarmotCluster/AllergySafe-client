@@ -15,6 +15,7 @@
  *  ingredients: {id:number,name:string}[],
  *  diaries: any[],
  *  category?: 'family'|'friend',
+ *  imageUrl: string,
  * }} Person
  */
 

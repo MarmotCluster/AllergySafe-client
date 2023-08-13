@@ -72,12 +72,13 @@ const Account = () => {
 
   return (
     <Box sx={{ m: 2 }}>
-      <Card>
+      <Card sx={{ borderRadius: 5 }}>
         <CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Avatar />
             <Box sx={{ ml: 2 }}>
               <Typography fontWeight="bold">{userData?.name ? userData.name : '...'}</Typography>
+              <Typography variant="body2">{userData?.email}</Typography>
               <Link
                 variant="body2"
                 onClick={() => {
@@ -94,42 +95,46 @@ const Account = () => {
       </Card>
 
       <Box sx={{ mt: 5 }}>
-        <Typography>비밀번호 바꾸기</Typography>
-        <Typography variant="body2">정기적으로 보안 관리를 하세요.</Typography>
-        <Box sx={{ '& > *:not(:first-child)': { mt: 1 }, mt: 2 }}>
-          <TextField
-            type="password"
-            fullWidth
-            size="small"
-            label="현재 비밀번호"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            error={error.currentPassword}
-          />
-          <TextField
-            type="password"
-            fullWidth
-            size="small"
-            label="새 비밀번호"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            helperText={`8~20자 이내의 영문 대소문자,숫자 그리고 다음 특수문자를 포함하여 입력하세요: ~ ! @ # ^ * ?`}
-            error={error.newPassword}
-          />
-          <TextField
-            type="password"
-            fullWidth
-            size="small"
-            label="새 비밀번호 확인"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            helperText={'새 비밀번호와 동일하게 작성하세요.'}
-            error={error.confirm}
-          />
-          <Button fullWidth size="medium" variant="contained" onClick={handleSubmit}>
-            저장하기
-          </Button>
-        </Box>
+        <Card sx={{ borderRadius: 5 }}>
+          <CardContent>
+            <Typography>비밀번호 바꾸기</Typography>
+            <Typography variant="body2">정기적으로 보안 관리를 하세요.</Typography>
+            <Box sx={{ '& > *:not(:first-child)': { mt: 1 }, mt: 2 }}>
+              <TextField
+                type="password"
+                fullWidth
+                // size="small"
+                label="현재 비밀번호"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                error={error.currentPassword}
+              />
+              <TextField
+                type="password"
+                fullWidth
+                // size="small"
+                label="새 비밀번호"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                helperText={`8~20자 이내의 영문 대소문자,숫자 그리고 다음 특수문자를 포함하여 입력하세요: ~ ! @ # ^ * ?`}
+                error={error.newPassword}
+              />
+              <TextField
+                type="password"
+                fullWidth
+                // size="small"
+                label="새 비밀번호 확인"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                helperText={'새 비밀번호와 동일하게 작성하세요.'}
+                error={error.confirm}
+              />
+              <Button fullWidth size="large" variant="contained" onClick={handleSubmit}>
+                저장하기
+              </Button>
+            </Box>
+          </CardContent>
+        </Card>
       </Box>
     </Box>
   );
