@@ -99,7 +99,7 @@ const ScanResult = () => {
               const constants = ['materials', 'allergies', 'ingredients'];
 
               return (
-                <Card key={id}>
+                <Card key={id} sx={{ borderRadius: 5 }}>
                   <CardContent>
                     <Box>
                       <Box display="flex" alignItems="center">
@@ -170,7 +170,7 @@ const ScanResult = () => {
         </Typography>
         <Typography sx={{ fontWeight: 900, fontSize: 32 }}>{scanResult.name}</Typography>
         <Typography variant="body2">원재료명</Typography>
-        <Card>
+        <Card sx={{ borderRadius: 5 }}>
           <CardContent>
             {scanResult.materials?.length > 0 ? (
               <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
@@ -197,7 +197,7 @@ const ScanResult = () => {
         <Typography variant="body2" sx={{ mt: 2 }}>
           알레르기 항원
         </Typography>
-        <Card>
+        <Card sx={{ borderRadius: 5 }}>
           <CardContent>
             {scanResult.allergies?.length > 0 ? (
               <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
@@ -225,7 +225,7 @@ const ScanResult = () => {
         <Typography variant="body2" sx={{ mt: 2 }}>
           의약품 성분
         </Typography>
-        <Card>
+        <Card sx={{ borderRadius: 5 }}>
           <CardContent>
             {scanResult.ingredients?.length > 0 ? (
               <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
@@ -273,7 +273,7 @@ const ScanResult = () => {
           </Typography>
           🚨
         </Typography>
-        <Box sx={{ textAlign: 'left', bgcolor: '#f4f4f4', borderRadius: 2, p: 2, '& > *:not(:last-child)': { mb: 2 } }}>
+        <Box sx={{ textAlign: 'left', bgcolor: '#f4f4f4', borderRadius: 5, p: 2, '& > *:not(:last-child)': { mb: 2 } }}>
           {renderFriends()}
         </Box>
       </Box>
