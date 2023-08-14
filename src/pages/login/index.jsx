@@ -68,7 +68,12 @@ const Login = () => {
   };
 
   const handleRequestEmail = async () => {
-    if (email.length === 0) {
+    function isValidEmail(email) {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailPattern.test(email);
+    }
+
+    if (email.length === 0 || !isValidEmail(email)) {
       setErrorEmail(true);
       return;
     }
@@ -142,7 +147,7 @@ const Login = () => {
           sx={{
             mt: Number(forgot) * 2,
             pt: Number(forgot),
-            height: Number(forgot) * 130,
+            height: Number(forgot) * 150,
             overflow: 'hidden',
             transition: 'height .2s ease, padding .2s ease, margin .2s ease',
           }}

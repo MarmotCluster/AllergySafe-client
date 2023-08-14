@@ -358,12 +358,15 @@ const AllergyProfiles = () => {
                 }}
                 disabled={data?.category !== 'family'}
                 component="label"
+                onClick={(e) => (e.target.value = null)}
                 onChange={async (e) => {
                   try {
                     setGlobal((v) => ({ ...v, loading: true }));
                     const res = await changeProfileImage(data.id, e.target.files[0]);
                     if (res.status >= 400) {
-                      toast.error(res.data.message);
+                      toast.error(
+                        res.data.message ? res.data.message : `${res.status} : 알 수 없는 오류가 발생했어요.`
+                      );
                     } else if (String(res.status)[0] === '2') {
                       toast('변경되었어요.');
                       refreshList(data.id);

@@ -7,6 +7,7 @@ import Account from '../pages/account';
 import ScanResult from '../pages/result';
 import AllergyProfiles from '../pages/profiles';
 import EmailValidation from '../pages/validation';
+import PasswordReset from '../pages/password-reset';
 
 /** contain paths that should not direct on logged in */
 export const ACCESS_DENY_ON_SIGNED_IN = ['/login', , '/register'];
@@ -38,6 +39,10 @@ const navigation = [
   {
     path: '/validate',
     element: <EmailValidation />,
+  },
+  {
+    path: '/password-reset',
+    element: <PasswordReset />,
   },
   {
     path: '/profile',

@@ -121,13 +121,14 @@ const useAuth = () => {
    *
    * @param {string} token
    * @param {boolean=} passwordReset
+   * @param {string=} newPassword
    * @returns
    */
-  const doEmailValidate = async (token, passwordReset = false) => {
+  const doEmailValidate = async (token, passwordReset = false, newPassword) => {
     if (passwordReset) {
       return await tryCatchResponse(async () => {
         try {
-          const res = await server.post(API.USER.passwordReset, { params: { token } });
+          const res = await server.post(API.USER.passwordReset, { token, newPassword });
           return getResponseUsable(res);
         } catch (err) {
           return getResponseUsable(err.response);
