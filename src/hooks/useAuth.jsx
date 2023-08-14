@@ -117,10 +117,38 @@ const useAuth = () => {
     });
   };
 
-  const doEmailValidate = async (token) => {
+  /**
+   *
+   * @param {string} token
+   * @param {boolean=} passwordReset
+   * @returns
+   */
+  const doEmailValidate = async (token, passwordReset = false) => {
+    if (passwordReset) {
+      return await tryCatchResponse(async () => {
+        try {
+          const res = await server.post(API.USER.passwordReset, { params: { token } });
+          return getResponseUsable(res);
+        } catch (err) {
+          return getResponseUsable(err.response);
+        }
+      });
+    }
+
     return await tryCatchResponse(async () => {
       try {
         const res = await server.get(API.USER.validate, { params: { token } });
+        return getResponseUsable(res);
+      } catch (err) {
+        return getResponseUsable(err.response);
+      }
+    });
+  };
+
+  const requestReset = async (email) => {
+    return await tryCatchResponse(async () => {
+      try {
+        const res = await server.get(API.USER.passwordReset, { params: { email } });
         return getResponseUsable(res);
       } catch (err) {
         return getResponseUsable(err.response);
@@ -133,7 +161,7 @@ const useAuth = () => {
     // console.log(res);
   };
 
-  return { me, login, logout, register, test, doEmailValidate, changePassword, changeProfileImage };
+  return { me, login, logout, register, test, doEmailValidate, changePassword, changeProfileImage, requestReset };
 };
 
 export default useAuth;

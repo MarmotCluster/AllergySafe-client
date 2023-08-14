@@ -12,7 +12,7 @@ import axios from 'axios';
 const Login = () => {
   /* hooks */
   const navigate = useNavigate();
-  const { login, register } = useAuth();
+  const { login, requestReset } = useAuth();
 
   /* stores */
   const [global, setGlobal] = useRecoilState(globalState);
@@ -22,6 +22,10 @@ const Login = () => {
   const [password, setPassword] = useState('abcd1234@');
   const [errorId, setErrorId] = useState(false);
   const [errorPassword, setErrorPassword] = useState(false);
+  const [errorEmail, setErrorEmail] = useState(false);
+
+  const [forgot, setForgot] = useState(false);
+  const [email, setEmail] = useState('');
 
   /* functions */
 
@@ -62,6 +66,30 @@ const Login = () => {
       setGlobal((v) => ({ ...v, loading: false }));
     }
   };
+
+  const handleRequestEmail = async () => {
+    if (email.length === 0) {
+      setErrorEmail(true);
+      return;
+    }
+    setErrorEmail(false);
+
+    try {
+      setGlobal((v) => ({ ...v, loading: true }));
+      const res = await requestReset(email);
+      if (res.status >= 400) {
+        toast.error(res.data.message);
+      } else {
+        toast(res.data.message);
+      }
+    } catch (err) {
+      toast.error('나중에 다시 시도하세요.');
+    } finally {
+      setGlobal((v) => ({ ...v, loading: false }));
+    }
+  };
+
+  /* render */
 
   return (
     <Container
@@ -108,6 +136,36 @@ const Login = () => {
           Aller.gy에 처음이세요?{' '}
           <Link component={RouterLink} to="/register">
             계정 만들기
+          </Link>
+        </Typography>
+        <Box
+          sx={{
+            mt: Number(forgot) * 2,
+            pt: Number(forgot),
+            height: Number(forgot) * 130,
+            overflow: 'hidden',
+            transition: 'height .2s ease, padding .2s ease, margin .2s ease',
+          }}
+        >
+          <TextField
+            fullWidth
+            type="email"
+            label="이메일"
+            placeholder="example@gmail.com"
+            sx={{ mb: 2 }}
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            error={errorEmail}
+            helperText={errorEmail && `올바른 이메일 형식이 아니거나 입력란이 비었어요.`}
+          />
+          <Button variant="outlined" fullWidth size="large" onClick={handleRequestEmail}>
+            이메일 보내기
+          </Button>
+        </Box>
+        <Typography variant="body2" textAlign="center" sx={{ mt: 2, color: '#ccc', fontSize: 12 }}>
+          비밀번호를 잊으셨나요?{' '}
+          <Link sx={{ cursor: 'pointer' }} component="button" onClick={() => setForgot((v) => !v)}>
+            초기화하기
           </Link>
         </Typography>
       </Box>

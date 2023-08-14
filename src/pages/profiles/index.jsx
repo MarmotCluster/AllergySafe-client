@@ -283,7 +283,12 @@ const AllergyProfiles = () => {
               <ArrowBackIosNewRoundedIcon />
             </IconButton>
             <Box display="flex">
-              <IconButton>
+              <IconButton
+                onClick={() => {
+                  navigator.clipboard.writeText(data.id);
+                  toast('클립보드에 복사되었어요.');
+                }}
+              >
                 <ShareRoundedIcon />
               </IconButton>
               {/* <IconButton>

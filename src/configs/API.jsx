@@ -69,6 +69,8 @@ const API = {
     profileElement: `/user/profile/element`,
     /** POST or DELETE */
     profileImage: `/user/profile/image`,
+    /** GET or POST */
+    passwordReset: `user/password-reset`,
   },
 };
 

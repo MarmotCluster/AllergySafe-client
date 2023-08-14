@@ -47,8 +47,8 @@ const useList = () => {
    *
    * @param {number} userId
    */
-  const addFriend = async (userId) => {
-    const res = await refresh(REST.POST, API.USER.friend, undefined, { userId });
+  const addFriend = async (profileId) => {
+    const res = await refresh(REST.POST, API.USER.friend, undefined, { profileId });
     return res;
   };
 
