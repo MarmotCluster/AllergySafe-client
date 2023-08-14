@@ -10,7 +10,7 @@ const useDiary = () => {
    * @param {string} endDate
    */
   const getDiary = async (profileId, startDate, endDate) => {
-    const res = await refresh(REST.GET, API.DIARY.period, undefined, { profileId, startDate, endDate });
+    const res = await refresh(REST.GET, API.DIARY.period, { params: { profileId, startDate, endDate } });
     return res;
   };
 

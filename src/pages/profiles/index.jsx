@@ -285,7 +285,9 @@ const AllergyProfiles = () => {
             <Box display="flex">
               <IconButton
                 onClick={() => {
-                  navigator.clipboard.writeText(data.id);
+                  navigator.clipboard.writeText(
+                    `https://allergysafe.life/profile?profileId=${data.id}&token=${auth.userData?.emailToken}&share=true`
+                  );
                   toast('클립보드에 복사되었어요.');
                 }}
               >
