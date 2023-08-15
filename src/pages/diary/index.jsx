@@ -1,36 +1,21 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  IconButton,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, Button, Divider, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import useDiary from '../../hooks/useDiary';
 import '../../types/index';
 
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import CreateIcon from '@mui/icons-material/Create';
-import QrCode2Icon from '@mui/icons-material/QrCode2';
 import DeleteIcon from '@mui/icons-material/Delete';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { toast } from 'react-hot-toast';
 import { useRecoilState } from 'recoil';
+import UserSelector from '../../components/modal/UserSelector';
 import { authState } from '../../stores/auth/atom';
-import { friendListState } from '../../stores/lists/friends';
 import { globalState } from '../../stores/global/atom';
+import { friendListState } from '../../stores/lists/friends';
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -199,8 +184,8 @@ const Diary = () => {
   }, [date]);
 
   useEffect(() => {
-    // console.log('선택된 ID', auth.userData?.id);
     setChosen(auth.userData?.id);
+    setChosenName(auth.userData?.name);
   }, [auth]);
 
   useEffect(() => {
@@ -521,7 +506,19 @@ const Diary = () => {
         </Box>
       </Box>
 
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
+      <UserSelector
+        open={open}
+        close={() => setOpen(false)}
+        categories={['family']}
+        selectedState={[chosen, setChosen]}
+        selectedNameState={[chosenName, setChosenName]}
+        checkBoxProps={{
+          onClick: () => {
+            setParsed((v) => ({ ...v, preventEffect: false }));
+          },
+        }}
+      />
+      {/* <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
         <DialogTitle>프로필 선택</DialogTitle>
         <DialogContent>
           <Box sx={{ maxHeight: `calc(100vh - 14rem)`, overflowY: 'scroll' }}>
@@ -568,7 +565,7 @@ const Diary = () => {
         <DialogActions>
           <Button onClick={() => setOpen(false)}>취소</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 };
