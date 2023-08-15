@@ -1,15 +1,36 @@
-import '../../types/index';
-import { Box, Button, Typography, useTheme } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  IconButton,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import useDiary from '../../hooks/useDiary';
+import '../../types/index';
 
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import CreateIcon from '@mui/icons-material/Create';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import { toast } from 'react-hot-toast';
 import { useRecoilState } from 'recoil';
 import { authState } from '../../stores/auth/atom';
-import { toast } from 'react-hot-toast';
+import { friendListState } from '../../stores/lists/friends';
+import { globalState } from '../../stores/global/atom';
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -17,9 +38,12 @@ const Diary = () => {
   /* stores */
   const theme = useTheme();
   const [auth, setAuth] = useRecoilState(authState);
+  const [global, setGlobal] = useRecoilState(globalState);
+  const [contact, setContact] = useRecoilState(friendListState);
 
   /* states */
-  const [date, setDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState(new Date(Date.now() + 9 * 60 * 60 * 1000));
   const [parsed, setParsed] = useState({
     preventEffect: true,
     year: -1,
@@ -30,11 +54,15 @@ const Diary = () => {
   });
 
   const [chosen, setChosen] = useState(auth.userData?.id);
-  /**@type {[Diary[], React.Dispatch<React.SetStateAction<Diary[]>]} */
-  const [diaries, setDiaries] = useState([]);
+  const [chosenName, setChosenName] = useState(auth.userData?.name);
+
+  /**@type {[{[key:string]: Diary}, React.Dispatch<React.SetStateAction<{[key:string]: Diary}>]} */
+  const [diaries, setDiaries] = useState({});
+  const [selected, setSelected] = useState('');
+  const [askDelete, setAskDelete] = useState(false);
 
   /* hooks */
-  const { getDiary } = useDiary();
+  const { getDiary, deleteDiaryById } = useDiary();
 
   /* functions */
   /** 그 月의 1일날 요일 반환 */
@@ -76,13 +104,13 @@ const Diary = () => {
 
   /** 오늘인지 반환 */
   function isCurrentDate(dateString) {
-    const currentDate = new Date();
+    const currentDate = new Date(Date.now() + 9 * 60 * 60 * 1000);
     const inputDate = new Date(dateString);
 
     return (
       currentDate.getFullYear() === inputDate.getFullYear() &&
       currentDate.getMonth() === inputDate.getMonth() &&
-      currentDate.getDate() === inputDate.getDate()
+      currentDate.getUTCDate() === inputDate.getDate()
     );
   }
 
@@ -135,6 +163,16 @@ const Diary = () => {
 
   /* effects */
   useEffect(() => {
+    document.body.style.backgroundColor = '#fafafa';
+
+    return () => {
+      document.body.style.backgroundColor = 'white';
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('오늘 날짜:', date.toISOString(), date);
+
     let res = { year: date.getFullYear(), month: date.getMonth() + 1, date: date.getDate(), day: date.getDay() };
     let elements = [[], [], [], [], [], [], []];
     const firstDay = getFirstDayOfWeek(res.year, res.month) - 1;
@@ -142,7 +180,7 @@ const Diary = () => {
     let week = 0;
 
     // ... 공백 먼저 채우고
-    console.log('첫번쨰 요일', DAYS[firstDay + 1]);
+    // console.log('첫번쨰 요일', DAYS[firstDay + 1]);
     for (let i = 0; i < firstDay + 1; i++) {
       elements[i].push(null);
     }
@@ -152,15 +190,16 @@ const Diary = () => {
       const dayCurrent = (i + firstDay) % 7;
       elements[dayCurrent].push({ date: i, asString: formatDate(res.year, res.month, i) });
     }
-    console.log(elements);
+    // console.log(elements);
     res.elements = elements;
     res.preventEffect = false;
 
     setParsed(res);
-    console.log(res);
+    // console.log(res);
   }, [date]);
 
   useEffect(() => {
+    // console.log('선택된 ID', auth.userData?.id);
     setChosen(auth.userData?.id);
   }, [auth]);
 
@@ -171,12 +210,18 @@ const Diary = () => {
         chosen,
         `${String(year)}-${String(month).padStart(2, '0')}-01`,
         fixMonth(`${String(year)}-${String(month).padStart(2, '0')}-01`)
-        // new Date().toISOString().split('T')[0]
       );
       if (res.status >= 400) {
         toast(res.data.message ? res.data.message : `${res.status} : 알 수 없는 오류가 발생했어요.`);
       } else if (String(res.status)[0] === '2') {
-        setDiaries([...res.data.diaryList]);
+        // ... 응답을 받으면 가공 시작
+        let data = res.data.diaryList;
+        let newstate = {};
+        data.forEach((item, index) => {
+          newstate[item.date] = item;
+        });
+        console.log('다이어리 상태에 들어가는 데이터:', newstate);
+        setDiaries({ ...newstate });
       }
 
       setParsed((v) => ({ ...v, preventEffect: true }));
@@ -188,88 +233,343 @@ const Diary = () => {
   }, [parsed, chosen]);
 
   /* renders */
+  const renderDiarySelected = () => {
+    const handleRemove = async () => {
+      try {
+        setGlobal((v) => ({ ...v, loading: true }));
+        const res = await deleteDiaryById(diaries[selected].id);
+        if (res.status >= 400) {
+          toast.error(res.data.message);
+        } else if (String(res.status)[0] === '2') {
+          toast('삭제되었어요.');
+          setDate(new Date(Date.now() + 9 * 60 * 60 * 1000));
+        }
+      } catch (err) {
+        toast.error('나중에 다시 시도하세요.');
+      } finally {
+        setGlobal((v) => ({ ...v, loading: false }));
+        setAskDelete(false);
+      }
+    };
+
+    const renderElements = () => {
+      const constants = {
+        ingestedFoods: '섭취한 음식',
+        occuredSymptoms: '발현된 증상',
+        takenMedicines: '복용한 약품',
+      };
+      if (!diaries[selected]) {
+        return (
+          <>
+            <Typography textAlign="center">작성된 일기가 없어요.</Typography>
+            <Divider sx={{ my: 2 }} />
+          </>
+        );
+      }
+
+      // console.log('선택된 날짜의 일기', diaries[selected]);
+      const target = diaries[selected];
+      return Object.keys(constants).map((key) => {
+        const pointed = target[key];
+        if (!pointed) return null;
+
+        return (
+          <Box key={key}>
+            <Typography variant="body2">{constants[key]}</Typography>
+            {pointed.length === 0 && (
+              <Typography textAlign="center" color="#999">
+                항목이 없어요.
+              </Typography>
+            )}
+            {pointed.map((item, index) => {
+              const { datetime, id, food, symptom, medicine } = item;
+              return (
+                <React.Fragment key={id}>
+                  <Typography variant="body2" sx={{ textAlign: 'right', color: '#999' }}>
+                    {datetime.replace('T', ' ')}
+                  </Typography>
+                  <Box sx={{ p: 2, bgcolor: '#f4f4f4', borderRadius: 2 }}>
+                    {(function () {
+                      if (key === 'ingestedFoods') {
+                        return (
+                          <>
+                            <Typography>{food?.name ? food.name : '-'}</Typography>
+                            <Typography variant="body2" sx={{ color: '#ccc' }}>
+                              <QrCode2Icon sx={{ fontSize: 12 }} />{' '}
+                              <i>{food?.barcode ? food.barcode : '수동 등록된 항목'}</i>
+                            </Typography>
+                          </>
+                        );
+                      }
+
+                      if (key === 'occuredSymptoms') {
+                        return (
+                          <>
+                            <Typography>{symptom?.name ? symptom.name : '-'}</Typography>
+                            {/* <Typography variant="body2" sx={{ color: '#ccc' }}>
+                              <QrCode2Icon sx={{ fontSize: 12 }} />{' '}
+                              <i>{symptom?.barcode ? symptom.barcode : '수동 등록된 항목'}</i>
+                            </Typography> */}
+                          </>
+                        );
+                      }
+
+                      return (
+                        <>
+                          <Typography>{medicine?.name ? medicine.name : '-'}</Typography>
+                          {/* <Typography variant="body2" sx={{ color: '#ccc' }}>
+                              <QrCode2Icon sx={{ fontSize: 12 }} />{' '}
+                              <i>{food?.barcode ? food.barcode : '수동 등록된 항목'}</i>
+                            </Typography> */}
+                        </>
+                      );
+                    })()}
+                  </Box>
+                </React.Fragment>
+              );
+            })}
+            <Divider sx={{ my: 2 }} />
+          </Box>
+        );
+      });
+    };
+
+    if (!selected) {
+      return <Typography textAlign="center">날짜를 선택하세요.</Typography>;
+    }
+
+    return (
+      <React.Fragment>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h5">{selected}</Typography>
+          <Tooltip title="삭제">
+            <IconButton disabled={!diaries[selected]} onClick={() => setAskDelete((v) => !v)}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+
+        <Box
+          sx={{ borderRadius: 100, overflow: 'hidden', transition: 'height .2s ease', height: 40 * Number(askDelete) }}
+        >
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon />}
+            fullWidth
+            sx={{ height: 40 }}
+            onClick={handleRemove}
+          >
+            이 과정을 되돌릴 수 없어요.
+          </Button>
+        </Box>
+
+        <Divider sx={{ my: 2 }} />
+        {renderElements()}
+      </React.Fragment>
+    );
+  };
 
   return (
-    <Box sx={{ py: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', px: 2 }}>
-        <Button endIcon={<AssignmentIndIcon />}>프로필 바꾸기</Button>
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'center' }}>
-        <Button sx={{ height: 100 }} onClick={() => setDate(new Date(getLastMonth(parsed.year, parsed.month - 1)))}>
-          <ArrowBackIosNewRoundedIcon fontSize="small" />
-        </Button>
-        <Box>
-          <Typography variant="h3">{parsed.month}</Typography>
-          <Typography>{parsed.year}</Typography>
+    <>
+      <Box sx={{ py: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2, alignItems: 'center' }}>
+          <Typography variant="body2" sx={{ ml: 0.5 }}>
+            <b>{chosenName ? chosenName : '-'}</b>님의 일기장
+          </Typography>
+          <Button endIcon={<AssignmentIndIcon />} onClick={() => setOpen(true)}>
+            프로필 바꾸기
+          </Button>
         </Box>
-        <Button
-          sx={{ height: 100 }}
-          onClick={() => setDate(new Date(getNextMonth(parsed.year, parsed.month)))}
-          disabled={isFutureDate(parsed.year * 12 + parsed.month + 1)}
+        <Box sx={{ bgcolor: 'white', mx: 2, mt: 3, borderRadius: 5, p: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.16)' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'center' }}>
+            <Button sx={{ height: 100 }} onClick={() => setDate(new Date(getLastMonth(parsed.year, parsed.month - 1)))}>
+              <ArrowBackIosNewRoundedIcon fontSize="small" />
+            </Button>
+            <Box>
+              <Typography variant="h3">{parsed.month}</Typography>
+              <Typography>{parsed.year}</Typography>
+            </Box>
+            <Button
+              sx={{ height: 100 }}
+              onClick={() => setDate(new Date(getNextMonth(parsed.year, parsed.month)))}
+              disabled={isFutureDate(parsed.year * 12 + parsed.month + 1)}
+            >
+              <ArrowForwardIosRoundedIcon fontSize="small" />
+            </Button>
+          </Box>
+
+          <Box name="calendar" sx={{ mt: 3 }}>
+            <Box sx={{ display: 'flex' }}>
+              {Array.from({ length: DAYS.length }).map((item, index) => {
+                return (
+                  <Typography
+                    key={index}
+                    variant="body2"
+                    sx={{
+                      width: '100%',
+                      textAlign: 'center',
+                      height: 32,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      color: '#ccc',
+                    }}
+                  >
+                    {DAYS[index]}
+                  </Typography>
+                );
+              })}
+            </Box>
+            <Box sx={{ display: 'flex', overflowX: 'hidden', minHeight: '528px' }}>
+              {parsed.elements.map((row, index) => {
+                return (
+                  <Box key={index} sx={{ width: '100%', position: 'relative' }}>
+                    {row.map((jtem, jndex) => {
+                      const renderEmoji = () => {
+                        if (!diaries[jtem.asString] || diaries[jtem.asString].occuredSymptoms.length === 0) return null;
+
+                        return (
+                          <Typography
+                            sx={{
+                              position: 'absolute',
+                              top: `50%`,
+                              left: '50%',
+                              transform: 'translate(-50%,-50%)',
+                              width: '100%',
+                              height: '100%',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                            fontSize={24}
+                          >
+                            🤒
+                          </Typography>
+                        );
+                      };
+
+                      if (!jtem) {
+                        return <Box sx={{ height: 88 }} key={jndex}></Box>;
+                      }
+
+                      return (
+                        <Button
+                          sx={{
+                            height: 88,
+                            border: isCurrentDate(jtem.asString)
+                              ? `1px solid ${theme.palette.primary.main}`
+                              : diaries[jtem.asString] && `1px dashed green`,
+                            borderRadius: 2,
+                            justifyContent: 'flex-start',
+                            alignItems: 'flex-start',
+                            minWidth: 0,
+                          }}
+                          color="inherit"
+                          key={jndex}
+                          fullWidth
+                          disabled={(function () {
+                            const t = new Date().toISOString().split('T')[0];
+                            return jtem.asString !== t && getLaterDate(jtem.asString, t) === jtem.asString;
+                          })()}
+                          onClick={() => setSelected(jtem.asString)}
+                        >
+                          {jtem.date}
+                          {renderEmoji()}
+                        </Button>
+                      );
+                    })}
+                  </Box>
+                );
+              })}
+            </Box>
+          </Box>
+        </Box>
+
+        <Box
+          name="view+selected"
+          sx={{
+            bgcolor: 'white',
+            mx: 2,
+            mt: 3,
+            mb: 8,
+            borderRadius: 5,
+            p: 3,
+            pt: 5,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.16)',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
         >
-          <ArrowForwardIosRoundedIcon fontSize="small" />
-        </Button>
-      </Box>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              p: 1,
+              background: `linear-gradient(315deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+            }}
+          ></Box>
 
-      <Box name="calendar" sx={{ mt: 3 }}>
-        <Box sx={{ display: 'flex' }}>
-          {Array.from({ length: DAYS.length }).map((item, index) => {
-            return (
-              <Typography
-                key={index}
-                variant="body2"
-                sx={{
-                  width: '100%',
-                  textAlign: 'center',
-                  height: 32,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  color: '#ccc',
-                }}
-              >
-                {DAYS[index]}
-              </Typography>
-            );
-          })}
-        </Box>
-        <Box sx={{ display: 'flex', overflowX: 'hidden' }}>
-          {parsed.elements.map((row, index) => {
-            return (
-              <Box key={index} sx={{ width: '100%' }}>
-                {row.map((jtem, jndex) => {
-                  if (!jtem) {
-                    return <Box sx={{ height: 88 }} key={jndex}></Box>;
-                  }
-
-                  return (
-                    <Button
-                      sx={{
-                        height: 88,
-                        border: isCurrentDate(jtem.asString) && `1px solid ${theme.palette.primary.main}`,
-                        borderRadius: 2,
-                        justifyContent: 'flex-start',
-                        alignItems: 'flex-start',
-                        minWidth: 0,
-                      }}
-                      color="inherit"
-                      key={jndex}
-                      fullWidth
-                      disabled={(function () {
-                        const t = new Date().toISOString().split('T')[0];
-                        return jtem.asString !== t && getLaterDate(jtem.asString, t) === jtem.asString;
-                      })()}
-                    >
-                      {jtem.date}
-                    </Button>
-                  );
-                })}
-              </Box>
-            );
-          })}
+          {renderDiarySelected()}
+          {selected && (
+            <Button fullWidth size="large" startIcon={<CreateIcon />} variant="contained">
+              새로 작성하기
+            </Button>
+          )}
         </Box>
       </Box>
-    </Box>
+
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
+        <DialogTitle>프로필 선택</DialogTitle>
+        <DialogContent>
+          <Box sx={{ maxHeight: `calc(100vh - 14rem)`, overflowY: 'scroll' }}>
+            {['family'].map((key) => {
+              return (
+                <React.Fragment key={key}>
+                  <Typography variant="body2">{key}</Typography>
+                  {contact[key].map((item, index) => {
+                    const { id, imageUrl, name } = item;
+                    return (
+                      <Box
+                        key={id}
+                        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 1 }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Avatar src={imageUrl} />
+                          <Typography variant="body2" ml={2}>
+                            {name}
+                          </Typography>
+                        </Box>
+                        <Checkbox
+                          icon={<RadioButtonUncheckedIcon />}
+                          checkedIcon={<RadioButtonCheckedIcon />}
+                          defaultChecked={chosen === id}
+                          onClick={() => {
+                            setChosen(() => {
+                              setParsed((v) => ({ ...v, preventEffect: false }));
+                              setChosenName(name);
+                              return id;
+                            });
+                            setOpen(false);
+                          }}
+                          disabled={chosen === id}
+                        />
+                      </Box>
+                    );
+                  })}
+                  <Divider sx={{ my: 1 }} />
+                </React.Fragment>
+              );
+            })}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>취소</Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

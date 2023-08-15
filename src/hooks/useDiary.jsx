@@ -70,7 +70,7 @@ const useDiary = () => {
    * @param {number} itemId
    */
   const writeScannedResultIntoDiary = async (profileId, diaryElementType, itemId) => {
-    const date = new Date();
+    const date = new Date(Date.now() + 9 * 60 * 60 * 1000);
     const today = date.toISOString().split('T')[0];
 
     // ... 금일 일기가 있는지 먼저 확인
@@ -89,7 +89,12 @@ const useDiary = () => {
     }
 
     // ... 일기쓰기
-    const res = await postElementIntoDiary(diaryId, { diaryElementType, id: itemId, dateTime: date.toISOString() });
+    const res = await postElementIntoDiary(diaryId, {
+      diaryElementType,
+      id: itemId,
+      // dateTime: date.toISOString().split('T')[0] + 'T00:00:01.000Z',
+      dateTime: date.toISOString(),
+    });
     return res;
   };
 
