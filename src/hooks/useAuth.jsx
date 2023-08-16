@@ -5,6 +5,7 @@ import { authState } from '../stores/auth/atom';
 import { getResponseUsable, refresh, REST, tryCatchResponse } from '../utils';
 import axios from 'axios';
 import useList from './useList';
+import useGuess from './useGuess';
 
 /**
  * @typedef {Object} LoginProps
@@ -18,12 +19,15 @@ const useAuth = () => {
 
   /* hooks */
   const { getContacts, getAutocompletes } = useList();
+  const { getFood, getMedicine } = useGuess();
 
   const me = async (isCalledInAuthContext = false) => {
     const res = await refresh(REST.GET, API.USER.me);
     if (res.status === 200 && isCalledInAuthContext) {
       getContacts();
       getAutocompletes();
+      getFood(res.data.id);
+      getMedicine(res.data.id);
       setAuth((state) => ({ ...state, isSignedIn: true, userData: res.data }));
     }
     return res;
@@ -97,7 +101,8 @@ const useAuth = () => {
   const changeProfileImage = async (profileId, formData) => {
     return await tryCatchResponse(async () => {
       try {
-        const token = window.localStorage.getItem('accessToken');
+        // const token = window.localStorage.getItem('accessToken');
+        const token = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQGV4YW1wbGUuY29tIiwiaXNzIjoiaHR0cHM6Ly9naXRodWIuY29tL2Rldi10YWV3b24ta2ltIiwiZXhwIjoxNzI3NjcxMTM3LCJpYXQiOjE2OTE2NzExMzd9.zYDWwv1Ja5xPO5QuZBcMbOuWly2nU2gLcRSm83lXQPs`;
         let res = await axios.post(`https://r2.allergysafe.life/image.png`, formData, {
           headers: { 'Content-Type': 'image/png' },
           params: { token, mimeType: 'image/png' },

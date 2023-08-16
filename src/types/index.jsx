@@ -41,6 +41,8 @@
  * @property {APIStaticItemDefault[]} materials
  * @property {APIStaticItemDefault[]} allergies
  * @property {APIStaticItemDefault[]} ingredients
+ * @property {APIStaticItemDefault[]} foods
+ * @property {APIStaticItemDefault[]} medicines
  */
 
 /* DIARY */

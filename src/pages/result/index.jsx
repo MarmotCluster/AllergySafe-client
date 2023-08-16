@@ -27,17 +27,13 @@ const ScanResult = () => {
 
   /* hooks */
   const { scanResult } = useScan();
-  const { writeScannedResultIntoDiary } = useDiary();
+  const { writeNewDiary } = useDiary();
 
   /* functions */
   const handleWrite = async () => {
     try {
       setGlobal((v) => ({ ...v, loading: true }));
-      const res = await writeScannedResultIntoDiary(
-        auth.userData?.id,
-        scanResult.isMedicine ? 'medicine' : 'food',
-        scanResult?.id
-      );
+      const res = await writeNewDiary(auth.userData?.id, scanResult.isMedicine ? 'medicine' : 'food', scanResult?.id);
       if (res.status >= 400) {
         toast.error(res.data.message);
       } else if (String(res.status)[0] === '2') {

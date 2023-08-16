@@ -8,5 +8,7 @@ export const autocompleteState = atom({
     materials: [],
     allergies: [],
     ingredients: [],
+    foods: [],
+    medicines: [],
   },
 });

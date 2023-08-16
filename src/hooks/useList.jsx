@@ -65,13 +65,17 @@ const useList = () => {
     const materials = refresh(REST.GET, API.MATERIAL.material);
     const allergies = refresh(REST.GET, API.ALLERGY.allergy);
     const ingredients = refresh(REST.GET, API.INGREDIENT.ingredient);
+    const foods = refresh(REST.GET, API.FOOD.food);
+    const medicines = refresh(REST.GET, API.MEDICINE.medicine);
 
-    const proms = await Promise.all([materials, allergies, ingredients]);
+    const proms = await Promise.all([materials, allergies, ingredients, foods, medicines]);
 
     const res = {
       materials: proms[0].data.map(({ id, name }) => ({ label: name, id })),
       allergies: proms[1].data.map(({ id, name }) => ({ label: name, id })),
       ingredients: proms[2].data.map(({ id, name }) => ({ label: name, id })),
+      foods: proms[3].data.map(({ id, name }) => ({ label: name, id })),
+      medicines: proms[4].data.map(({ id, name }) => ({ label: name, id })),
     };
 
     setOptions({ ...res });

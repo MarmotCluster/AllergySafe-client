@@ -1,6 +1,6 @@
 {
-  "short_name": "Aller.gy",
-  "name": "Aller.gy",
+  "short_name": "AllergySafe",
+  "name": "AllergySafe",
   "icons": [
     {
       "src": "favicon.png",
@@ -18,7 +18,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#5a2aa4",
   "background_color": "#ffffff"

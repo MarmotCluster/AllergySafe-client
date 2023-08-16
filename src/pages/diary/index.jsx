@@ -16,6 +16,7 @@ import UserSelector from '../../components/modal/UserSelector';
 import { authState } from '../../stores/auth/atom';
 import { globalState } from '../../stores/global/atom';
 import { friendListState } from '../../stores/lists/friends';
+import CreateNew from '../../components/diary/CreateNew';
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -45,6 +46,7 @@ const Diary = () => {
   const [diaries, setDiaries] = useState({});
   const [selected, setSelected] = useState('');
   const [askDelete, setAskDelete] = useState(false);
+  const [createNew, setCreateNew] = useState(false);
 
   /* hooks */
   const { getDiary, deleteDiaryById } = useDiary();
@@ -188,33 +190,33 @@ const Diary = () => {
     setChosenName(auth.userData?.name);
   }, [auth]);
 
+  const refreshDiary = async () => {
+    const { year, month, day } = parsed;
+    const res = await getDiary(
+      chosen,
+      `${String(year)}-${String(month).padStart(2, '0')}-01`,
+      fixMonth(`${String(year)}-${String(month).padStart(2, '0')}-01`)
+    );
+    if (res.status >= 400) {
+      toast(res.data.message ? res.data.message : `${res.status} : 알 수 없는 오류가 발생했어요.`);
+    } else if (String(res.status)[0] === '2') {
+      // ... 응답을 받으면 가공 시작
+      let data = res.data.diaryList;
+      let newstate = {};
+      data.forEach((item, index) => {
+        newstate[item.date] = item;
+      });
+      console.log('다이어리 상태에 들어가는 데이터:', newstate);
+      setDiaries({ ...newstate });
+    }
+
+    setParsed((v) => ({ ...v, preventEffect: true }));
+  };
+
   useEffect(() => {
-    const init = async () => {
-      const { year, month, day } = parsed;
-      const res = await getDiary(
-        chosen,
-        `${String(year)}-${String(month).padStart(2, '0')}-01`,
-        fixMonth(`${String(year)}-${String(month).padStart(2, '0')}-01`)
-      );
-      if (res.status >= 400) {
-        toast(res.data.message ? res.data.message : `${res.status} : 알 수 없는 오류가 발생했어요.`);
-      } else if (String(res.status)[0] === '2') {
-        // ... 응답을 받으면 가공 시작
-        let data = res.data.diaryList;
-        let newstate = {};
-        data.forEach((item, index) => {
-          newstate[item.date] = item;
-        });
-        console.log('다이어리 상태에 들어가는 데이터:', newstate);
-        setDiaries({ ...newstate });
-      }
-
-      setParsed((v) => ({ ...v, preventEffect: true }));
-    };
-
     if (parsed.year === -1 || !chosen || parsed.preventEffect === true) return;
 
-    init();
+    refreshDiary();
   }, [parsed, chosen]);
 
   /* renders */
@@ -355,6 +357,35 @@ const Diary = () => {
     );
   };
 
+  const renderCreateNew = () => {
+    if (!createNew) {
+      return (
+        <Button
+          fullWidth
+          size="large"
+          startIcon={<CreateIcon />}
+          variant="contained"
+          onClick={() => setCreateNew(true)}
+        >
+          새로 작성하기
+        </Button>
+      );
+    }
+
+    return (
+      <Box>
+        <CreateNew
+          profileId={chosen}
+          refreshSuper={() => {
+            setCreateNew(false);
+            refreshDiary();
+          }}
+          dateSelected={selected}
+        />
+      </Box>
+    );
+  };
+
   return (
     <>
       <Box sx={{ py: 3 }}>
@@ -457,7 +488,10 @@ const Diary = () => {
                             const t = new Date().toISOString().split('T')[0];
                             return jtem.asString !== t && getLaterDate(jtem.asString, t) === jtem.asString;
                           })()}
-                          onClick={() => setSelected(jtem.asString)}
+                          onClick={() => {
+                            window.document.documentElement.scrollTop = window.document.documentElement.scrollHeight;
+                            setSelected(jtem.asString);
+                          }}
                         >
                           {jtem.date}
                           {renderEmoji()}
@@ -498,11 +532,7 @@ const Diary = () => {
           ></Box>
 
           {renderDiarySelected()}
-          {selected && (
-            <Button fullWidth size="large" startIcon={<CreateIcon />} variant="contained">
-              새로 작성하기
-            </Button>
-          )}
+          {selected && renderCreateNew()}
         </Box>
       </Box>
 

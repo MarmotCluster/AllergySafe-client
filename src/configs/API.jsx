@@ -48,6 +48,12 @@ const API = {
     /** POST or DELETE/{diaryId} */
     element: `diary/element`,
   },
+  GUESS: {
+    /** GET/{profileId} */
+    food: '/guess/food',
+    /** GET/{profileId} */
+    medicine: '/guess/medicine',
+  },
   USER: {
     /** PUT, POST */
     user: `/user`,

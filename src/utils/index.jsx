@@ -193,3 +193,111 @@ export const getTextColorForBackground = (backgroundColor) => {
   // Determine if white or black text would be more legible
   return luminance > 0.5 ? 'black' : 'white';
 };
+
+export const DateHandler = {
+  /** 대한민국 시간 반환 */
+  getDate: () => {
+    return new Date(Date.now() + 9 * 60 * 60 * 1000);
+  },
+
+  /** 시간은 제거 */
+  getYYYYMMDD: (str) => {
+    return str.split('T')[0];
+  },
+
+  /** 그 月의 1일날 요일 반환 */
+  getFirstDayOfWeek: (year, month) => {
+    return new Date(year, month - 1, 1).getDay();
+  },
+
+  /** 그 月의 날 수 반환 (28~31(일)) */
+  getDaysInMonth: (year, month) => {
+    return new Date(year, month, 0).getDate();
+  },
+
+  /** 지난 달 반환 'yyyy-mm' */
+  getLastMonth: (year, month) => {
+    if (month === 0) {
+      year--;
+      month = 12;
+    }
+    return `${year}-${String(month).padStart(2, '0')}`;
+  },
+
+  /** 다음 달 반환 'yyyy-mm' */
+  getNextMonth: (year, month) => {
+    if (month === 12) {
+      year++;
+      month = 1;
+    } else {
+      month++;
+    }
+    return `${year}-${String(month).padStart(2, '0')}`;
+  },
+
+  /** 입력받은 날짜 문자열로 반환 'yyyy-mm-dd' */
+  formatDate: (year, month, day) => {
+    const formattedMonth = String(month).padStart(2, '0');
+    const formattedDay = String(day).padStart(2, '0');
+    return `${year}-${formattedMonth}-${formattedDay}`;
+  },
+
+  /** 오늘인지 반환 */
+  isCurrentDate: (dateString) => {
+    const currentDate = new Date(Date.now() + 9 * 60 * 60 * 1000);
+    const inputDate = new Date(dateString);
+
+    return (
+      currentDate.getFullYear() === inputDate.getFullYear() &&
+      currentDate.getMonth() === inputDate.getMonth() &&
+      currentDate.getUTCDate() === inputDate.getDate()
+    );
+  },
+
+  /** 전달 다음달 고쳐진 값 반환 */
+  fixMonth: (dateString) => {
+    const [year, month, day] = dateString.split('-').map(Number);
+
+    let newYear = year;
+    let newMonth = month + 1;
+
+    if (newMonth > 12) {
+      newMonth = 1;
+      newYear += 1;
+    }
+
+    const newDateString = `${newYear}-${String(newMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+    return newDateString;
+  },
+
+  /** 미래여부 반환 */
+  isFutureDate: (yearMonthValue) => {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1;
+
+    const inputYear = Math.floor(yearMonthValue / 12);
+    const inputMonth = yearMonthValue % 12;
+
+    if (inputYear > currentYear) {
+      return true;
+    } else if (inputYear === currentYear && inputMonth > currentMonth) {
+      return true;
+    }
+
+    return false;
+  },
+
+  /** 더 미래의 날짜 반환 */
+  getLaterDate: (dateString1, dateString2) => {
+    const date1 = new Date(dateString1);
+    const date2 = new Date(dateString2);
+
+    if (date1 > date2) {
+      return dateString1;
+    } else {
+      return dateString2;
+    }
+  },
+};

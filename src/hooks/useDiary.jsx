@@ -68,10 +68,11 @@ const useDiary = () => {
    * @param {number} profileId
    * @param {'food' | 'medicine'} diaryElementType
    * @param {number} itemId
+   * @param {string=} dateTime yyyy-mm-dd
    */
-  const writeScannedResultIntoDiary = async (profileId, diaryElementType, itemId) => {
+  const writeNewDiary = async (profileId, diaryElementType, itemId, dateTime = undefined) => {
     const date = new Date(Date.now() + 9 * 60 * 60 * 1000);
-    const today = date.toISOString().split('T')[0];
+    const today = dateTime ? dateTime.split('T')[0] : date.toISOString().split('T')[0];
 
     // ... 금일 일기가 있는지 먼저 확인
     let diaryId = null;
@@ -93,7 +94,7 @@ const useDiary = () => {
       diaryElementType,
       id: itemId,
       // dateTime: date.toISOString().split('T')[0] + 'T00:00:01.000Z',
-      dateTime: date.toISOString(),
+      dateTime: dateTime ? dateTime : date.toISOString(),
     });
     return res;
   };
@@ -105,7 +106,7 @@ const useDiary = () => {
     deleteDiaryById,
     postElementIntoDiary,
     deleteElementFromDiary,
-    writeScannedResultIntoDiary,
+    writeNewDiary,
   };
 };
 
