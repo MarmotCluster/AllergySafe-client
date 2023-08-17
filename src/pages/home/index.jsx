@@ -44,6 +44,8 @@ import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
 import RateUs from '../../components/modal/RateUs';
 import { rateState } from '../../stores/lists/rates';
 
+const STATIC_HEIGHT = 730;
+
 const Home = () => {
   /* refs */
   /**@type {React.MutableRefObject<HTMLDivElement>} */
@@ -391,7 +393,7 @@ const Home = () => {
             transition: '.4s',
             transformStyle: 'preserve-3d',
             width: '100%',
-            height: 860,
+            height: STATIC_HEIGHT,
             transform: isMedicine ? 'rotateY(180deg)' : 'rotateY(0deg)',
           }}
         >

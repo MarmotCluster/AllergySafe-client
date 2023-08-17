@@ -195,7 +195,7 @@ const RateUs = (props) => {
           {rates.star !== -1 ? (
             <Box sx={{ textAlign: 'left' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography sx={{ mb: 1 }}>평가 목록 ({rates.totalCount})</Typography>
+                <Typography sx={{ mb: 1 }}>평가 목록 ({rates.reviews.length})</Typography>
                 <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                   <Typography component="span">
                     <StarHalfIcon color="warning" />
