@@ -644,7 +644,7 @@ const AllergyProfiles = () => {
                       options={options.allergies}
                       getOptionDisabled={(option) => Boolean(data.allergies.find((item) => item.id === option.id))}
                       fullWidth
-                      renderInput={(params) => <TextField {...params} label="식품 원재료" size="small" />}
+                      renderInput={(params) => <TextField {...params} label="알레르기 항원" size="small" />}
                       sx={{ p: 2, pr: 0 }}
                       onChange={(e, newValue) => setNewname((v) => ({ ...v, allergies: newValue }))}
                       value={newName.allergies.label}
@@ -758,7 +758,7 @@ const AllergyProfiles = () => {
                       options={options.ingredients}
                       getOptionDisabled={(option) => Boolean(data.ingredients.find((item) => item.id === option.id))}
                       fullWidth
-                      renderInput={(params) => <TextField {...params} label="식품 원재료" size="small" />}
+                      renderInput={(params) => <TextField {...params} label="의약품 성분" size="small" />}
                       sx={{ p: 2, pr: 0 }}
                       onChange={(e, newValue) => setNewname((v) => ({ ...v, ingredients: newValue }))}
                       value={newName.ingredients.label}
