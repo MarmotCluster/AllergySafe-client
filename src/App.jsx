@@ -8,6 +8,8 @@ import Loading from './components/global/Loading';
 import Home from './pages/home';
 import navigation from './router/navigation';
 
+export const SCREEN_MIN_WIDTH = 280;
+
 const App = () => {
   return (
     <BrowserRouter>
@@ -26,7 +28,7 @@ const App = () => {
       />
       <Loading />
       <AuthContext />
-      <Box sx={{ minWidth: 380, position: 'relative', height: '100vh' }}>
+      <Box sx={{ minWidth: SCREEN_MIN_WIDTH, position: 'relative', height: '100vh' }}>
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />

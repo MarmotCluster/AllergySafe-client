@@ -12,6 +12,7 @@ import ContactsIcon from '@mui/icons-material/Contacts';
 import { useRecoilState } from 'recoil';
 import { authState } from '../../stores/auth/atom';
 import { toast } from 'react-hot-toast';
+import { SCREEN_MIN_WIDTH } from '../../App';
 
 /**
  *
@@ -63,7 +64,7 @@ const Header = () => {
           position: 'fixed',
           bottom: 0,
           left: 0,
-          minWidth: 380,
+          minWidth: SCREEN_MIN_WIDTH,
           width: '100vw',
           height: 60,
           boxShadow: `0 -3px 64px rgba(0,0,0,0.16)`,

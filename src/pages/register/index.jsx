@@ -125,7 +125,7 @@ const Register = () => {
           <TextField
             fullWidth
             type="password"
-            label="비닐번호"
+            label="비밀번호"
             placeholder="password"
             sx={{ mb: 2 }}
             onChange={(e) => setPassword(e.target.value)}
@@ -136,7 +136,7 @@ const Register = () => {
           <TextField
             fullWidth
             type="password"
-            label="비닐번호 확인"
+            label="비밀번호 확인"
             placeholder="password"
             sx={{ mb: 2 }}
             onChange={(e) => setConfirm(e.target.value)}

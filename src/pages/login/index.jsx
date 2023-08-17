@@ -137,7 +137,7 @@ const Login = () => {
           <TextField
             fullWidth
             type="password"
-            label="비닐번호"
+            label="비밀번호"
             placeholder="password"
             sx={{ mb: 2 }}
             onChange={(e) => setPassword(e.target.value)}
