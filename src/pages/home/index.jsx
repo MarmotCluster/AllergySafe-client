@@ -279,7 +279,7 @@ const Home = () => {
         <Grid container sx={{ textAlign: 'center', my: 2 }}>
           {Array.from({ length: 4 }).map((_, index) => {
             return (
-              <Grid key={index} item xs={12}>
+              <Grid key={index} item xs={6}>
                 <Typography
                   variant="body2"
                   color={
@@ -294,7 +294,7 @@ const Home = () => {
                 </Typography>
                 <Typography
                   sx={{
-                    fontSize: 24,
+                    fontSize: 18,
                     fontWeight: 900,
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
