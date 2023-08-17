@@ -57,10 +57,10 @@ const useScan = () => {
       : await refresh(REST.GET, API.SCANNER.food, { params: { barcode: serial } });
     res = getResponseUsable(res);
 
-    if (isSuccess(res.status)) {
-      console.log(res);
-      return res;
-    }
+    // if (isSuccess(res.status)) {
+    //   console.log(res);
+    //   return res;
+    // }
 
     const id = res.data.id;
     return await searchById(id, isMedicine, profileIdList);

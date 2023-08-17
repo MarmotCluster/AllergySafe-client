@@ -108,6 +108,7 @@ const Scan = () => {
         toast.error(res.data.message);
         setOpenself(true);
       } else if (isSuccess(res.status)) {
+        console.log(res);
         navigate('/result');
       }
     } catch (err) {
