@@ -7,6 +7,7 @@ import {
   Grid,
   IconButton,
   Radio,
+  Rating,
   Tooltip,
   Typography,
   alpha,
@@ -39,6 +40,10 @@ import { guessState } from '../../stores/lists/guess';
 import HideImageIcon from '@mui/icons-material/HideImage';
 import { DateHandler } from '../../utils';
 
+import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
+import RateUs from '../../components/modal/RateUs';
+import { rateState } from '../../stores/lists/rates';
+
 const Home = () => {
   /* refs */
   /**@type {React.MutableRefObject<HTMLDivElement>} */
@@ -48,6 +53,7 @@ const Home = () => {
   const auth = useRecoilValue(authState);
   const contact = useRecoilValue(friendListState);
   const guess = useRecoilValue(guessState);
+  const rates = useRecoilValue(rateState);
 
   /* hooks */
   const theme = useTheme();
@@ -60,6 +66,9 @@ const Home = () => {
   const [isMedicine, setIsMedicine] = useState(false);
   const [percentage, setPercentage] = useState(50);
   const [itemSelected, setItemSelected] = useState('0');
+
+  const [rate, setRate] = useState(5);
+  const [openRange, setOpenRange] = useState(false);
 
   const [daterange, setDaterange] = useState({
     from: '2023-08-01',
@@ -133,6 +142,10 @@ const Home = () => {
   useEffect(() => {
     console.log({ guess });
   }, [guess]);
+
+  useEffect(() => {
+    console.log(rates);
+  }, [rates]);
 
   /* render */
   /**
@@ -349,7 +362,7 @@ const Home = () => {
 
   return (
     <>
-      <Box sx={{ m: 2, pb: 10 }}>
+      <Box sx={{ m: 2 }}>
         <Box name="topbar" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography>알레르기 항원 추론</Typography>
           <Box sx={{ display: 'flex' }}>
@@ -424,7 +437,7 @@ const Home = () => {
         <Box sx={{ mt: 3, p: 2 }}>
           <Typography>
             <Typography component="span" sx={{ fontWeight: 900 }}>
-              {selectedName}
+              {guess[isMedicine ? 'medicine' : 'food'].name || selectedName || '-'}
             </Typography>
             님의 식단 분석
           </Typography>
@@ -499,6 +512,7 @@ const Home = () => {
                       : ''
                   }
                   placement="top"
+                  enterTouchDelay={0}
                 >
                   {guess[isMedicine ? 'medicine' : 'food'].guessedData?.length > 0 &&
                   guess[isMedicine ? 'medicine' : 'food'].guessedData[Number(itemSelected)].imageUrl ? (
@@ -602,6 +616,29 @@ const Home = () => {
         </Box>
       </Box>
 
+      <Box sx={{ bgcolor: 'white', p: 2, pb: 12, textAlign: 'center', position: 'relative' }}>
+        <Typography>{rates.star !== -1 ? '🙏평가해 주셔서 감사합니다!' : '🙋‍♂️🙋‍♀️우리의 서비스를 평가하세요!'}</Typography>
+        <Rating
+          size="large"
+          sx={{ py: 2 }}
+          value={rates.star !== -1 ? rates.star : rate}
+          onChange={(e, newValue) => {
+            if (newValue < rate) {
+              setRate(newValue < 1 ? 1 : newValue);
+            } else {
+              setRate(newValue);
+            }
+          }}
+          onClick={() => setOpenRange(true)}
+          readOnly={rates.star !== -1}
+        />
+        {rates.reviews !== -1 && (
+          <Button startIcon={<ThumbsUpDownIcon />} fullWidth size="large" onClick={() => setOpenRange(true)}>
+            ..평가 더 보기
+          </Button>
+        )}
+      </Box>
+
       <UserSelector
         open={open}
         close={() => setOpen(false)}
@@ -609,6 +646,8 @@ const Home = () => {
         selectedState={[selected, setSelected]}
         selectedNameState={[selectedName, setSelectedName]}
       />
+
+      <RateUs openState={[openRange, setOpenRange]} rateState={[rate, setRate]} />
     </>
   );
 };

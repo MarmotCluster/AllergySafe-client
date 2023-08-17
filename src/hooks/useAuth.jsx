@@ -18,7 +18,7 @@ const useAuth = () => {
   const [auth, setAuth] = useRecoilState(authState);
 
   /* hooks */
-  const { getContacts, getAutocompletes } = useList();
+  const { getContacts, getAutocompletes, getRate } = useList();
   const { getFood, getMedicine } = useGuess();
 
   const me = async (isCalledInAuthContext = false) => {
@@ -28,6 +28,7 @@ const useAuth = () => {
       getAutocompletes();
       getFood(res.data.id);
       getMedicine(res.data.id);
+      getRate(res.data.id);
       setAuth((state) => ({ ...state, isSignedIn: true, userData: res.data }));
     }
     return res;

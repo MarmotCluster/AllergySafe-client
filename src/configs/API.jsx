@@ -76,7 +76,11 @@ const API = {
     /** POST or DELETE */
     profileImage: `/user/profile/image`,
     /** GET or POST */
-    passwordReset: `user/password-reset`,
+    passwordReset: `/user/password-reset`,
+  },
+  RATE: {
+    /**GET, GET/{userId} */
+    rate: `/review`,
   },
 };
 

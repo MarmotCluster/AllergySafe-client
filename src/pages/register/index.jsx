@@ -86,6 +86,17 @@ const Register = () => {
       }}
     >
       <Box sx={{ width: '100%' }}>
+        <Box sx={{ textAlign: 'center', pb: 2 }}>
+          <Box
+            sx={{
+              width: 50,
+              height: 50,
+              backgroundImage: `url('${process.env.PUBLIC_URL}/colored.svg')`,
+              backgroundSize: 'cover',
+              display: 'inline-block',
+            }}
+          ></Box>
+        </Box>
         <Typography variant="body1" display="block" textAlign="center" mb={2}>
           아래 <b>양식</b>을 작성하세요.
         </Typography>

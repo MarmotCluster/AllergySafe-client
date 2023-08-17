@@ -95,7 +95,7 @@ const Header = () => {
           <DocumentScannerIcon sx={{ width: 48, height: 48, color: '#fafafa' }} />
         </Box>
         <Box sx={{ width: '100%', textAlign: 'center' }}>
-          <SingleMenu activated={location.pathname === '/'} onClick={() => navigate('/')}>
+          <SingleMenu activated={location.pathname === '/'} onClick={() => navigate(hopTo('/'))}>
             <HomeRoundedIcon sx={{ width: 32, height: 32 }} />
           </SingleMenu>
           <SingleMenu activated={location.pathname.includes('/diary')} onClick={() => navigate(hopTo('/diary'))}>

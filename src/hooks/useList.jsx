@@ -5,6 +5,7 @@ import { autocompleteState } from '../stores/lists/autocompletes';
 import { REST, refresh, tryCatchResponse } from '../utils';
 import API from '../configs/API';
 import { authState } from '../stores/auth/atom';
+import { rateState } from '../stores/lists/rates';
 
 const useList = () => {
   /* stores */
@@ -13,6 +14,8 @@ const useList = () => {
   const [friends, setFriends] = useRecoilState(friendListState);
 
   const [options, setOptions] = useRecoilState(autocompleteState);
+
+  const [rates, setRates] = useRecoilState(rateState);
 
   /* functions */
   const getContacts = async () => {
@@ -104,6 +107,25 @@ const useList = () => {
     return res;
   };
 
+  const getRate = async () => {
+    const res = await refresh(REST.GET, `${API.RATE.rate}`);
+    if (String(res.status)[0] === '2') {
+      setRates({ ...res.data });
+    }
+    return res;
+  };
+
+  /**
+   *
+   * @param {number} rate
+   * @param {string} content
+   * @returns
+   */
+  const postReview = async (star, content) => {
+    const res = await refresh(REST.POST, `${API.RATE.rate}`, undefined, { star, content });
+    return res;
+  };
+
   return {
     getContacts,
     addFamily,
@@ -113,6 +135,8 @@ const useList = () => {
     getAutocompletes,
     postElement,
     removeElement,
+    getRate,
+    postReview,
   };
 };
 
