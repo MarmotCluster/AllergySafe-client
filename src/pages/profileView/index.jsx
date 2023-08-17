@@ -372,6 +372,12 @@ const ProfileView = () => {
               startIcon={<PersonAddIcon />}
               sx={{ height: '100%' }}
               onClick={async () => {
+                if (!auth.isSignedIn) {
+                  toast('로그인 후에 이용하세요.');
+                  navigate('/login');
+                  return;
+                }
+
                 setGlobal((v) => ({ ...v, loading: true }));
                 try {
                   const res = await addFriend(searchParams.get('profileId'));
@@ -380,7 +386,6 @@ const ProfileView = () => {
                   } else if (String(res.status)[0] === '2') {
                     toast('친구로 추가되었어요.');
                     navigate(auth.isSignedIn ? '/profile' : '/login');
-                    // closeSelected();
                   }
                 } catch (err) {
                   toast.error('나중에 다시 시도하세요.');
