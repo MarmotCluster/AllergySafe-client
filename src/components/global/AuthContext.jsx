@@ -26,7 +26,7 @@ const AuthContext = () => {
         }
       } else {
         if (ACCESS_DENY_ON_SIGNED_OUT.includes(current)) {
-          navigate('/login', { replace: true });
+          navigate('/');
         }
       }
     }

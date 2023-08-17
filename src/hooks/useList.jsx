@@ -2,10 +2,11 @@ import React from 'react';
 import { useRecoilState } from 'recoil';
 import { friendListState } from '../stores/lists/friends';
 import { autocompleteState } from '../stores/lists/autocompletes';
-import { REST, refresh, tryCatchResponse } from '../utils';
+import { REST, getResponseUsable, refresh, tryCatchResponse } from '../utils';
 import API from '../configs/API';
 import { authState } from '../stores/auth/atom';
 import { rateState } from '../stores/lists/rates';
+import server from '../configs/server';
 
 const useList = () => {
   /* stores */
@@ -135,8 +136,14 @@ const useList = () => {
    * @returns
    */
   const getProfileShared = async (profileId, token) => {
-    const res = await refresh(REST.GET, `${API.USER.profileShare}/${profileId}`, { params: { token } });
-    return res;
+    return tryCatchResponse(async () => {
+      try {
+        const res = await server.get(`${API.USER.profileShare}/${profileId}`, { params: { token } });
+        return getResponseUsable(res);
+      } catch (err) {
+        return getResponseUsable(err.response);
+      }
+    });
   };
 
   return {
