@@ -63,7 +63,7 @@ const Scan = () => {
   const [decodedResults, setDecodedResults] = useState([]);
 
   const [isMedicine, setIsMedicine] = useState(false);
-  const [serial, setSerial] = useState('8801045520124'); // 진라면 static for temporal
+  const [serial, setSerial] = useState(''); // 진라면 static for temporal
   const [error, setError] = useState({ serial: false });
 
   /* functions */

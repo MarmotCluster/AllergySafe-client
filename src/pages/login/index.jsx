@@ -19,8 +19,8 @@ const Login = () => {
   const [global, setGlobal] = useRecoilState(globalState);
 
   /* states */
-  const [id, setId] = useState('example@example.com');
-  const [password, setPassword] = useState('abcd1234@');
+  const [id, setId] = useState('');
+  const [password, setPassword] = useState('');
   const [errorId, setErrorId] = useState(false);
   const [errorPassword, setErrorPassword] = useState(false);
   const [errorEmail, setErrorEmail] = useState(false);
