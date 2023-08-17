@@ -89,7 +89,7 @@ const useAuth = () => {
    * @returns
    */
   const changePassword = async (form) => {
-    const res = await refresh(REST.PUT, API.USER.user, undefined, form);
+    const res = await refresh(REST.POST, API.USER.me, undefined, form);
     return res;
   };
 
