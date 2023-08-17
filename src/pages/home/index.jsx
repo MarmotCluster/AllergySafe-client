@@ -200,7 +200,7 @@ const Home = () => {
             <Box>
               <Box sx={{ display: 'flex', justifyContent: 'end' }}>
                 <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                  <Typography variant="caption">추론 대상 일자</Typography>
+                  <Typography variant="caption">추론 대상</Typography>
                   <Typography sx={{ width: 100, textAlign: 'right', fontWeight: 900 }}>
                     {guess[key].startDate?.replace(/-/g, '.')}
                   </Typography>
