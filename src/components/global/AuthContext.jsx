@@ -17,17 +17,18 @@ const AuthContext = () => {
     const storedToken = window.localStorage.getItem('accessToken');
     let current = location.pathname;
 
-    if (current[current.length - 1] === '/' && location.pathname !== '/') {
-      current = current.slice(0, current.length - 1);
+    if (current[current.length - 1] === '/') {
+      current = location.pathname !== '/' ? current.slice(0, current.length - 1) : current;
+      console.log(current);
+    }
+
+    if (storedToken) {
+      if (ACCESS_DENY_ON_SIGNED_IN.includes(current)) {
+        navigate('/');
+      }
     } else {
-      if (storedToken) {
-        if (ACCESS_DENY_ON_SIGNED_IN.includes(current)) {
-          navigate('/');
-        }
-      } else {
-        if (ACCESS_DENY_ON_SIGNED_OUT.includes(current)) {
-          navigate('/');
-        }
+      if (ACCESS_DENY_ON_SIGNED_OUT.includes(current)) {
+        navigate('/login');
       }
     }
   }, [location]);

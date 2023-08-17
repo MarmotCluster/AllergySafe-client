@@ -2,7 +2,7 @@ import React from 'react';
 import { useRecoilState } from 'recoil';
 import { friendListState } from '../stores/lists/friends';
 import { autocompleteState } from '../stores/lists/autocompletes';
-import { REST, getResponseUsable, refresh, tryCatchResponse } from '../utils';
+import { REST, getResponseUsable, isSuccess, refresh, tryCatchResponse } from '../utils';
 import API from '../configs/API';
 import { authState } from '../stores/auth/atom';
 import { rateState } from '../stores/lists/rates';
@@ -112,7 +112,7 @@ const useList = () => {
 
   const getRate = async () => {
     const res = await refresh(REST.GET, `${API.RATE.rate}`);
-    if (String(res.status)[0] === '2') {
+    if (isSuccess(res.status)) {
       setRates({ ...res.data });
     }
     return res;

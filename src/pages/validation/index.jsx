@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import useAuth from '../../hooks/useAuth';
 import { globalState } from '../../stores/global/atom';
+import { isSuccess } from '../../utils';
 
 const EmailValidation = () => {
   /* stores */
@@ -31,7 +32,7 @@ const EmailValidation = () => {
         if (res.status >= 400) {
           toast.error(res.data.message);
           navigate('/', { replace: true });
-        } else if (String(res.status)[0] === '2') {
+        } else if (isSuccess(res.status)) {
           toast('이메일 인증에 성공했어요. 로그인 해주세요.');
           navigate('/login', { replace: true });
         }

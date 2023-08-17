@@ -1,5 +1,5 @@
 import React from 'react';
-import { REST, refresh } from '../utils';
+import { REST, isSuccess, refresh } from '../utils';
 import API from '../configs/API';
 
 const useDiary = () => {
@@ -77,7 +77,7 @@ const useDiary = () => {
     // ... 금일 일기가 있는지 먼저 확인
     let diaryId = null;
     let diaryToday = await getDiaryByDate(profileId, today);
-    if (String(diaryToday.status)[0] === '2') {
+    if (isSuccess(diaryToday.status)) {
       diaryId = diaryToday.data.id;
     } else if (diaryToday.status >= 400) {
       // ... 없으면 생성 후에

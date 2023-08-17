@@ -33,6 +33,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { autocompleteState } from '../../stores/lists/autocompletes';
 import useAuth from '../../hooks/useAuth';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { isSuccess } from '../../utils';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -122,7 +123,7 @@ const ProfileView = () => {
     console.log('리프레시 리스트 콜드.');
     try {
       const res = await getContacts();
-      if (String(res.status)[0] === '2') {
+      if (isSuccess(res.status)) {
         console.log('받은 res', res);
         let found;
         found = res.data.family.find((item) => item.id === id);
@@ -156,7 +157,7 @@ const ProfileView = () => {
           if (singleData.status >= 400) {
             toast.error(singleData.data.message);
             navigate(auth.isSignedIn ? '/' : '/login', { replace: true });
-          } else if (String(singleData.status)[0] === '2') {
+          } else if (isSuccess(singleData.status)) {
             setSelected(profileId);
             setData({ ...singleData.data, category: 'friend' });
           }
@@ -228,7 +229,7 @@ const ProfileView = () => {
                   const res = key === 'family' ? await addFamily(newName[key]) : await addFriend(newName[key]);
                   if (res.status >= 400) {
                     toast.error(res.data.message);
-                  } else if (String(res.status)[0] === '2') {
+                  } else if (isSuccess(res.status)) {
                     toast('추가되었어요.');
                     getContacts();
                     setAdding((v) => ({ ...v, [key]: false }));
@@ -383,7 +384,7 @@ const ProfileView = () => {
                   const res = await addFriend(searchParams.get('profileId'));
                   if (res.status >= 400) {
                     toast.error(res.data.message);
-                  } else if (String(res.status)[0] === '2') {
+                  } else if (isSuccess(res.status)) {
                     toast('친구로 추가되었어요.');
                     navigate(auth.isSignedIn ? '/profile' : '/login');
                   }
@@ -433,7 +434,7 @@ const ProfileView = () => {
                       toast.error(
                         res.data.message ? res.data.message : `${res.status} : 알 수 없는 오류가 발생했어요.`
                       );
-                    } else if (String(res.status)[0] === '2') {
+                    } else if (isSuccess(res.status)) {
                       toast('변경되었어요.');
                       refreshList(data.id);
                     }
@@ -475,7 +476,7 @@ const ProfileView = () => {
 
                             if (res.status >= 400) {
                               toast.error(res.data.message);
-                            } else if (String(res.status)[0] === '2') {
+                            } else if (isSuccess(res.status)) {
                               toast('삭제되었어요.');
                               refreshList(data.id);
                             }
@@ -543,7 +544,7 @@ const ProfileView = () => {
 
                           if (res.status >= 400) {
                             toast.error(res.data.message);
-                          } else if (String(res.status)[0] === '2') {
+                          } else if (isSuccess(res.status)) {
                             toast('추가되었어요.');
                             setNewname((v) => ({ ...v, materials: { label: null, id: null } }));
                             refreshList(data.id);
@@ -589,7 +590,7 @@ const ProfileView = () => {
 
                             if (res.status >= 400) {
                               toast.error(res.data.message);
-                            } else if (String(res.status)[0] === '2') {
+                            } else if (isSuccess(res.status)) {
                               toast('삭제되었어요.');
                               refreshList(data.id);
                             }
@@ -657,7 +658,7 @@ const ProfileView = () => {
 
                           if (res.status >= 400) {
                             toast.error(res.data.message);
-                          } else if (String(res.status)[0] === '2') {
+                          } else if (isSuccess(res.status)) {
                             toast('추가되었어요.');
                             setNewname((v) => ({ ...v, allergies: { label: null, id: null } }));
                             refreshList(data.id);
@@ -703,7 +704,7 @@ const ProfileView = () => {
 
                             if (res.status >= 400) {
                               toast.error(res.data.message);
-                            } else if (String(res.status)[0] === '2') {
+                            } else if (isSuccess(res.status)) {
                               toast('삭제되었어요.');
                               refreshList(data.id);
                             }
@@ -771,7 +772,7 @@ const ProfileView = () => {
 
                           if (res.status >= 400) {
                             toast.error(res.data.message);
-                          } else if (String(res.status)[0] === '2') {
+                          } else if (isSuccess(res.status)) {
                             toast('추가되었어요.');
                             setNewname((v) => ({ ...v, ingredients: { label: null, id: null } }));
                             refreshList(data.id);

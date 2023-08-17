@@ -5,6 +5,7 @@ import useAuth from '../../hooks/useAuth';
 import { useRecoilState } from 'recoil';
 import { globalState } from '../../stores/global/atom';
 import { toast } from 'react-hot-toast';
+import { isSuccess } from '../../utils';
 
 const Register = () => {
   /* hooks */
@@ -64,7 +65,7 @@ const Register = () => {
       const res = await register({ name: username, email, password });
       if (res.status >= 400) {
         toast.error(res.data.message);
-      } else if (String(res.status)[0] === '2') {
+      } else if (isSuccess(res.status)) {
         toast(res.data.message);
         navigate('/login', { replace: true });
       }

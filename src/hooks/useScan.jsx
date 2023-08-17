@@ -1,5 +1,5 @@
 import React from 'react';
-import { REST, getResponseUsable, refresh, tryCatchResponse } from '../utils';
+import { REST, getResponseUsable, isSuccess, refresh, tryCatchResponse } from '../utils';
 import API from '../configs/API';
 import { useRecoilState } from 'recoil';
 import { scanResultState } from '../stores/scan/atom';
@@ -57,7 +57,7 @@ const useScan = () => {
       : await refresh(REST.GET, API.SCANNER.food, { params: { barcode: serial } });
     res = getResponseUsable(res);
 
-    if (String(res.status)[0] !== '2') {
+    if (isSuccess(res.status)) {
       console.log(res);
       return res;
     }
@@ -76,7 +76,7 @@ const useScan = () => {
   const submitCustomized = async (name, materials, allergies, profileIdList) => {
     let res = await refresh(REST.POST, API.FOOD.food, undefined, { name, materials, allergies });
     res = getResponseUsable(res);
-    if (String(res.status)[0] !== '2') {
+    if (isSuccess(res.status)) {
       console.log(res);
       return res;
     }

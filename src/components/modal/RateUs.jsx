@@ -7,6 +7,7 @@ import { rateState } from '../../stores/lists/rates';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import useList from '../../hooks/useList';
 import { globalState } from '../../stores/global/atom';
+import { isSuccess } from '../../utils';
 
 const dummy = [
   {
@@ -63,7 +64,7 @@ const RateUs = (props) => {
       const res = await postReview(rate, content);
       if (res.status >= 400) {
         toast.error(res.data.message);
-      } else if (String(res.status)[0] === '2') {
+      } else if (isSuccess(res.status)) {
         toast('등록되었어요.');
         getRate();
       }

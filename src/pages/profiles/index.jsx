@@ -31,6 +31,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { autocompleteState } from '../../stores/lists/autocompletes';
 import useAuth from '../../hooks/useAuth';
 import { useSearchParams } from 'react-router-dom';
+import { isSuccess } from '../../utils';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -117,7 +118,7 @@ const AllergyProfiles = () => {
     console.log('리프레시 리스트 콜드.');
     try {
       const res = await getContacts();
-      if (String(res.status)[0] === '2') {
+      if (isSuccess(res.status)) {
         console.log('받은 res', res);
         let found;
         found = res.data.family.find((item) => item.id === id);
@@ -156,7 +157,7 @@ const AllergyProfiles = () => {
           const res = await addFriend(profileId);
           if (res.status >= 400) {
             toast.error(res.data.message);
-          } else if (String(res.status)[0] === '2') {
+          } else if (isSuccess(res.status)) {
             setData({ category: 'friend', ...res.data });
             setSelected(profileId);
             toast('친구로 추가되었어요.');
@@ -230,7 +231,7 @@ const AllergyProfiles = () => {
                   const res = key === 'family' ? await addFamily(newName[key]) : await addFriend(newName[key]);
                   if (res.status >= 400) {
                     toast.error(res.data.message);
-                  } else if (String(res.status)[0] === '2') {
+                  } else if (isSuccess(res.status)) {
                     toast('추가되었어요.');
                     getContacts();
                     setAdding((v) => ({ ...v, [key]: false }));
@@ -380,7 +381,7 @@ const AllergyProfiles = () => {
                     data?.category === 'family' ? await deleteFromFamily(data.id) : await deleteFromFriend(data.id);
                   if (res.status >= 400) {
                     toast.error(res.data.message);
-                  } else if (String(res.status)[0] === '2') {
+                  } else if (isSuccess(res.status)) {
                     toast('삭제되었어요.');
                     getContacts();
                     closeSelected();
@@ -437,7 +438,7 @@ const AllergyProfiles = () => {
                         toast.error(
                           res.data.message ? res.data.message : `${res.status} : 알 수 없는 오류가 발생했어요.`
                         );
-                      } else if (String(res.status)[0] === '2') {
+                      } else if (isSuccess(res.status)) {
                         toast('변경되었어요.');
                         refreshList(data.id);
                       }
@@ -480,7 +481,7 @@ const AllergyProfiles = () => {
 
                             if (res.status >= 400) {
                               toast.error(res.data.message);
-                            } else if (String(res.status)[0] === '2') {
+                            } else if (isSuccess(res.status)) {
                               toast('삭제되었어요.');
                               refreshList(data.id);
                             }
@@ -548,7 +549,7 @@ const AllergyProfiles = () => {
 
                           if (res.status >= 400) {
                             toast.error(res.data.message);
-                          } else if (String(res.status)[0] === '2') {
+                          } else if (isSuccess(res.status)) {
                             toast('추가되었어요.');
                             setNewname((v) => ({ ...v, materials: { label: null, id: null } }));
                             refreshList(data.id);
@@ -594,7 +595,7 @@ const AllergyProfiles = () => {
 
                             if (res.status >= 400) {
                               toast.error(res.data.message);
-                            } else if (String(res.status)[0] === '2') {
+                            } else if (isSuccess(res.status)) {
                               toast('삭제되었어요.');
                               refreshList(data.id);
                             }
@@ -662,7 +663,7 @@ const AllergyProfiles = () => {
 
                           if (res.status >= 400) {
                             toast.error(res.data.message);
-                          } else if (String(res.status)[0] === '2') {
+                          } else if (isSuccess(res.status)) {
                             toast('추가되었어요.');
                             setNewname((v) => ({ ...v, allergies: { label: null, id: null } }));
                             refreshList(data.id);
@@ -708,7 +709,7 @@ const AllergyProfiles = () => {
 
                             if (res.status >= 400) {
                               toast.error(res.data.message);
-                            } else if (String(res.status)[0] === '2') {
+                            } else if (isSuccess(res.status)) {
                               toast('삭제되었어요.');
                               refreshList(data.id);
                             }
@@ -776,7 +777,7 @@ const AllergyProfiles = () => {
 
                           if (res.status >= 400) {
                             toast.error(res.data.message);
-                          } else if (String(res.status)[0] === '2') {
+                          } else if (isSuccess(res.status)) {
                             toast('추가되었어요.');
                             setNewname((v) => ({ ...v, ingredients: { label: null, id: null } }));
                             refreshList(data.id);

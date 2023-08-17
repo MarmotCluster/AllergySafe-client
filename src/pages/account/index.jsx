@@ -24,6 +24,7 @@ import { toast } from 'react-hot-toast';
 import { globalState } from '../../stores/global/atom';
 
 import PersonOffIcon from '@mui/icons-material/PersonOff';
+import { isSuccess } from '../../utils';
 
 const Account = () => {
   /* stores */
@@ -78,7 +79,7 @@ const Account = () => {
       const res = await changePassword({ currentPassword, newPassword });
       if (res.status >= 400) {
         toast.error(res.data.message);
-      } else if (String(res.status)[0] === '2') {
+      } else if (isSuccess(res.status)) {
         console.log(res);
         setCurrentPassword('');
         setNewPassword('');
@@ -98,7 +99,7 @@ const Account = () => {
       const res = await withdraw();
       if (res.status >= 400) {
         toast.error(res.data.message);
-      } else if (String(res.status)[0] === '2') {
+      } else if (isSuccess(res.status)) {
         toast('이용해 주셔서 감사합니다.');
         logout();
         navigate('/login');

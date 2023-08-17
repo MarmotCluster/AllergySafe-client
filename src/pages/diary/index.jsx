@@ -17,6 +17,7 @@ import { authState } from '../../stores/auth/atom';
 import { globalState } from '../../stores/global/atom';
 import { friendListState } from '../../stores/lists/friends';
 import CreateNew from '../../components/diary/CreateNew';
+import { isSuccess } from '../../utils';
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -199,7 +200,7 @@ const Diary = () => {
     );
     if (res.status >= 400) {
       toast(res.data.message ? res.data.message : `${res.status} : 알 수 없는 오류가 발생했어요.`);
-    } else if (String(res.status)[0] === '2') {
+    } else if (isSuccess(res.status)) {
       // ... 응답을 받으면 가공 시작
       let data = res.data.diaryList;
       let newstate = {};
@@ -227,7 +228,7 @@ const Diary = () => {
         const res = await deleteDiaryById(diaries[selected].id);
         if (res.status >= 400) {
           toast.error(res.data.message);
-        } else if (String(res.status)[0] === '2') {
+        } else if (isSuccess(res.status)) {
           toast('삭제되었어요.');
           setDate(new Date(Date.now() + 9 * 60 * 60 * 1000));
         }

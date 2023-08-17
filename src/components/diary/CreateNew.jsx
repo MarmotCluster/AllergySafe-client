@@ -16,6 +16,7 @@ import useDiary from '../../hooks/useDiary';
 import { toast } from 'react-hot-toast';
 import { globalState } from '../../stores/global/atom';
 import ImageIcon from '@mui/icons-material/Image';
+import { isSuccess } from '../../utils';
 
 /**
  *
@@ -66,7 +67,7 @@ const CreateNew = (props) => {
     try {
       setGlobal((v) => ({ ...v, loading: true }));
       const res = await Promise.all(proms);
-      if (res.some((item) => String(item.status)[0] === '2')) {
+      if (res.some((item) => isSuccess(item.status))) {
         toast('등록되었어요.');
         refreshSuper();
       }
@@ -75,44 +76,9 @@ const CreateNew = (props) => {
     } finally {
       setGlobal((v) => ({ ...v, loading: false }));
     }
-
-    // if (!selected?.item?.id) {
-    //   toast(`${isMedicine ? '의약품' : '식품'}을 선택하세요.`);
-    //   return;
-    // }
-    // console.log({ profileId, itemId: selected.id });
-    // try {
-    //   setGlobal((v) => ({ ...v, loading: true }));
-    //   const res = await writeNewDiary(
-    //     profileId,
-    //     isMedicine ? 'medicine' : 'food',
-    //     selected.item.id,
-    //     `${dateSelected}T${String(date.hour).padStart(2, '0')}:${String(date.min).padStart(2, '0')}:00.000Z`
-    //   );
-    //   if (res.status >= 400) {
-    //     toast.error(res.data.message);
-    //   } else if (String(res.status)[0] === '2') {
-    //     toast('등록되었어요.');
-    //     refreshSuper();
-    //   }
-    // } catch (err) {
-    //   toast.error('나중에 다시 시도하세요.');
-    // } finally {
-    //   setGlobal((v) => ({ ...v, loading: false }));
-    // }
   };
 
-  // useEffect(() => {
-  //   setSelected({ item: {} });
-  // }, [isMedicine]);
-
   const renderSelector = () => {
-    // if (isMedicine) {
-    //   return (
-
-    //   );
-    // }
-
     return (
       <>
         <Autocomplete
