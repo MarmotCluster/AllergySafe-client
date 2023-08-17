@@ -180,7 +180,11 @@ const Home = () => {
         ></Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {key === 'food' ? <EggAltIcon color="secondary" /> : <MedicationIcon color="primary" />}
-          <Button endIcon={<FlipCameraAndroidIcon />} onClick={() => setIsMedicine(key === 'food')}>
+          <Button
+            endIcon={<FlipCameraAndroidIcon />}
+            onClick={() => setIsMedicine(key === 'food')}
+            color={key === 'food' ? 'primary' : 'secondary'}
+          >
             {key === 'food' ? '의약품으로..' : '식품으로..'}
           </Button>
         </Box>
@@ -275,7 +279,7 @@ const Home = () => {
         <Grid container sx={{ textAlign: 'center', my: 2 }}>
           {Array.from({ length: 4 }).map((_, index) => {
             return (
-              <Grid key={index} item xs={3}>
+              <Grid key={index} item xs={12}>
                 <Typography
                   variant="body2"
                   color={
@@ -387,7 +391,7 @@ const Home = () => {
             transition: '.4s',
             transformStyle: 'preserve-3d',
             width: '100%',
-            height: 676,
+            height: 860,
             transform: isMedicine ? 'rotateY(180deg)' : 'rotateY(0deg)',
           }}
         >

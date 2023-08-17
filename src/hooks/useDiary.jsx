@@ -66,11 +66,11 @@ const useDiary = () => {
   /**
    *
    * @param {number} profileId
-   * @param {'food' | 'medicine'} diaryElementType
+   * @param {'food' | 'medicine' | 'symptom'} diaryElementType
    * @param {number} itemId
    * @param {string=} dateTime yyyy-mm-dd
    */
-  const writeNewDiary = async (profileId, diaryElementType, itemId, dateTime = undefined) => {
+  const writeNewDiary = async (profileId, diaryElementType, itemId, dateTime = undefined, base64String = null) => {
     const date = new Date(Date.now() + 9 * 60 * 60 * 1000);
     const today = dateTime ? dateTime.split('T')[0] : date.toISOString().split('T')[0];
 
@@ -95,6 +95,7 @@ const useDiary = () => {
       id: itemId,
       // dateTime: date.toISOString().split('T')[0] + 'T00:00:01.000Z',
       dateTime: dateTime ? dateTime : date.toISOString(),
+      base64String,
     });
     return res;
   };

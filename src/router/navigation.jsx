@@ -8,9 +8,10 @@ import ScanResult from '../pages/result';
 import AllergyProfiles from '../pages/profiles';
 import EmailValidation from '../pages/validation';
 import PasswordReset from '../pages/password-reset';
+import ProfileView from '../pages/profileView';
 
 /** contain paths that should not direct on logged in */
-export const ACCESS_DENY_ON_SIGNED_IN = ['/login', , '/register'];
+export const ACCESS_DENY_ON_SIGNED_IN = ['/login', '/register'];
 /** contain paths that should not direct on logged OUT */
 export const ACCESS_DENY_ON_SIGNED_OUT = ['/articles/create', '/users/me', '/scan', `/profile`, `/diary`];
 
@@ -47,6 +48,10 @@ const navigation = [
   {
     path: '/profile',
     element: <AllergyProfiles />,
+  },
+  {
+    path: '/profileView',
+    element: <ProfileView />,
   },
   {
     path: '/scan',

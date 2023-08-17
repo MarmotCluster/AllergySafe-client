@@ -160,7 +160,7 @@ const RateUs = (props) => {
             }}
           />
           <Typography variant="body2" sx={{ textAlign: 'right', color: '#ccc' }}>
-            사용자 | {item.date}
+            사용자
           </Typography>
           <Rating size="large" sx={{ py: 1 }} value={item.star} readOnly />
           <Typography>

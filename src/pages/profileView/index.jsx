@@ -26,19 +26,23 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-hot-toast';
 
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { autocompleteState } from '../../stores/lists/autocompletes';
 import useAuth from '../../hooks/useAuth';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
-const AllergyProfiles = () => {
+const ProfileView = () => {
   /* built-in hooks */
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const navigate = useNavigate();
 
   /* stores */
   const contacts = useRecoilValue(friendListState);
@@ -107,6 +111,7 @@ const AllergyProfiles = () => {
       allergies: { label: null, id: null },
       ingredients: { label: null, id: null },
     });
+    navigate(auth.isSignedIn ? '/profile' : '/login');
   };
 
   /**
@@ -150,17 +155,10 @@ const AllergyProfiles = () => {
 
           if (singleData.status >= 400) {
             toast.error(singleData.data.message);
-            return;
-          }
-
-          const res = await addFriend(profileId);
-          if (res.status >= 400) {
-            toast.error(res.data.message);
-          } else if (String(res.status)[0] === '2') {
-            setData({ category: 'friend', ...res.data });
+            navigate(auth.isSignedIn ? '/' : '/login', { replace: true });
+          } else if (String(singleData.status)[0] === '2') {
             setSelected(profileId);
-            toast('친구로 추가되었어요.');
-            getContacts();
+            setData({ ...singleData.data, category: 'friend' });
           }
         } catch (err) {
           toast.error('나중에 다시 시도하세요.');
@@ -331,13 +329,13 @@ const AllergyProfiles = () => {
 
   return (
     <>
-      <Box sx={{ m: 2 }}>
+      {/* <Box sx={{ m: 2 }}>
         <Box>
           <Typography>알레르기 세이프 주소록</Typography>
         </Box>
 
         <Box sx={{ pb: 12 }}>{renderContacts()}</Box>
-      </Box>
+      </Box> */}
       <Dialog fullScreen open={selected !== -1} TransitionComponent={Transition}>
         <Box sx={{ bgcolor: '#f4f4f4', width: '100%', height: '100%', p: 2, maxHeight: '100vh', overflowY: 'scroll' }}>
           <Box name="header" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -345,7 +343,7 @@ const AllergyProfiles = () => {
               <ArrowBackIosNewRoundedIcon />
             </IconButton>
             <Box display="flex">
-              <IconButton
+              {/* <IconButton
                 onClick={() => {
                   navigator.clipboard.writeText(
                     `https://allergysafe.life/profileView?profileId=${data.id}&token=${auth.userData?.emailToken}&share=true`
@@ -354,36 +352,35 @@ const AllergyProfiles = () => {
                 }}
               >
                 <ShareRoundedIcon />
-              </IconButton>
-              {/* <IconButton>
-                <EditRoundedIcon />
               </IconButton> */}
-              {auth.userData?.id !== data?.id && (
+              {/* <IconButton>
+                  <EditRoundedIcon />
+                </IconButton> */}
+              {/* {auth.userData?.id !== data?.id && (
                 <IconButton color="error" onClick={() => setAskDelete((v) => !v)}>
                   <DeleteIcon />
                 </IconButton>
-              )}
+              )} */}
             </Box>
           </Box>
 
-          <Box sx={{ borderRadius: 5, overflow: 'hidden', height: askDelete ? 40 : 0, transition: 'height .2s ease' }}>
+          <Box sx={{ borderRadius: 5, overflow: 'hidden', height: 40, transition: 'height .2s ease' }}>
             <Button
               fullWidth
               variant="contained"
-              color="error"
-              startIcon={<DeleteIcon />}
+              color="primary"
+              startIcon={<PersonAddIcon />}
               sx={{ height: '100%' }}
               onClick={async () => {
                 setGlobal((v) => ({ ...v, loading: true }));
                 try {
-                  const res =
-                    data?.category === 'family' ? await deleteFromFamily(data.id) : await deleteFromFriend(data.id);
+                  const res = await addFriend(searchParams.get('profileId'));
                   if (res.status >= 400) {
                     toast.error(res.data.message);
                   } else if (String(res.status)[0] === '2') {
-                    toast('삭제되었어요.');
-                    getContacts();
-                    closeSelected();
+                    toast('친구로 추가되었어요.');
+                    navigate(auth.isSignedIn ? '/profile' : '/login');
+                    // closeSelected();
                   }
                 } catch (err) {
                   toast.error('나중에 다시 시도하세요.');
@@ -392,7 +389,7 @@ const AllergyProfiles = () => {
                 }
               }}
             >
-              이 과정은 되돌릴 수 없어요.
+              친구로 추가하기
             </Button>
           </Box>
 
@@ -424,29 +421,22 @@ const AllergyProfiles = () => {
                 component="label"
                 onClick={(e) => (e.target.value = null)}
                 onChange={async (e) => {
-                  // ... base64로 먼저 인코딩
-                  let reader = new FileReader();
-                  reader.readAsDataURL(e.target.files[0]);
-                  reader.onload = async (e) => {
-                    const imageData = e.target.result;
-                    // ... 문제 없으면 서버에 전송
-                    try {
-                      setGlobal((v) => ({ ...v, loading: true }));
-                      const res = await changeProfileImage(data.id, imageData);
-                      if (res.status >= 400) {
-                        toast.error(
-                          res.data.message ? res.data.message : `${res.status} : 알 수 없는 오류가 발생했어요.`
-                        );
-                      } else if (String(res.status)[0] === '2') {
-                        toast('변경되었어요.');
-                        refreshList(data.id);
-                      }
-                    } catch (err) {
-                      toast.error('나중에 다시 시도하세요.');
-                    } finally {
-                      setGlobal((v) => ({ ...v, loading: false }));
+                  try {
+                    setGlobal((v) => ({ ...v, loading: true }));
+                    const res = await changeProfileImage(data.id, e.target.files[0]);
+                    if (res.status >= 400) {
+                      toast.error(
+                        res.data.message ? res.data.message : `${res.status} : 알 수 없는 오류가 발생했어요.`
+                      );
+                    } else if (String(res.status)[0] === '2') {
+                      toast('변경되었어요.');
+                      refreshList(data.id);
                     }
-                  };
+                  } catch (err) {
+                    toast.error('나중에 다시 시도하세요.');
+                  } finally {
+                    setGlobal((v) => ({ ...v, loading: false }));
+                  }
                 }}
               >
                 <Avatar src={data?.imageUrl} sx={{ width: '100%', height: '100%' }} />
@@ -804,4 +794,4 @@ const AllergyProfiles = () => {
   );
 };
 
-export default AllergyProfiles;
+export default ProfileView;

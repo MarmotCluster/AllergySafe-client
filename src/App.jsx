@@ -26,7 +26,7 @@ const App = () => {
       />
       <Loading />
       <AuthContext />
-      <Box sx={{ minWidth: 400, position: 'relative', height: '100vh' }}>
+      <Box sx={{ minWidth: 380, position: 'relative', height: '100vh' }}>
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />

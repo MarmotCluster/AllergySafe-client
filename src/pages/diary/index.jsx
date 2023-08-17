@@ -269,7 +269,7 @@ const Diary = () => {
               </Typography>
             )}
             {pointed.map((item, index) => {
-              const { datetime, id, food, symptom, medicine } = item;
+              const { datetime, id, food, symptom, medicine, imageUrl } = item;
               return (
                 <React.Fragment key={id}>
                   <Typography variant="body2" sx={{ textAlign: 'right', color: '#999' }}>
@@ -297,6 +297,7 @@ const Diary = () => {
                               <QrCode2Icon sx={{ fontSize: 12 }} />{' '}
                               <i>{symptom?.barcode ? symptom.barcode : '수동 등록된 항목'}</i>
                             </Typography> */}
+                            <Box>{imageUrl && <img src={imageUrl} width="100%" />}</Box>
                           </>
                         );
                       }

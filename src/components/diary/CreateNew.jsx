@@ -15,6 +15,7 @@ import {
 import useDiary from '../../hooks/useDiary';
 import { toast } from 'react-hot-toast';
 import { globalState } from '../../stores/global/atom';
+import ImageIcon from '@mui/icons-material/Image';
 
 /**
  *
@@ -27,9 +28,10 @@ const CreateNew = (props) => {
   const [global, setGlobal] = useRecoilState(globalState);
 
   const [isMedicine, setIsMedicine] = useState(false);
-  const [selected, setSelected] = useState({
-    item: { id: null, label: '' },
-  });
+  const [food, setFood] = useState({});
+  const [medicine, setMedicine] = useState({});
+  const [symptom, setSymptom] = useState({});
+  const [uploadedImage, setUploadedImage] = useState(null);
   const [date, setDate] = useState({
     hour: 0,
     min: 0,
@@ -38,23 +40,33 @@ const CreateNew = (props) => {
   const { writeNewDiary } = useDiary();
 
   const handleSubmit = async () => {
-    if (!selected?.item?.id) {
-      toast(`${isMedicine ? '의약품' : '식품'}을 선택하세요.`);
+    if (!food.id && !medicine.id && !symptom.id) {
+      toast('하나 이상은 정보를 제공하세요.');
       return;
     }
-    // console.log({ profileId, itemId: selected.id });
+
+    let proms = [];
+    const requestDate = `${dateSelected}T${String(date.hour).padStart(2, '0')}:${String(date.min).padStart(
+      2,
+      '0'
+    )}:00.000Z`;
+
+    if (food.id) {
+      proms.push(writeNewDiary(profileId, 'food', food.id, requestDate));
+    }
+
+    if (medicine.id) {
+      proms.push(writeNewDiary(profileId, 'medicine', medicine.id, requestDate));
+    }
+
+    if (symptom.id) {
+      proms.push(writeNewDiary(profileId, 'symptom', symptom.id, requestDate, uploadedImage ? uploadedImage : null));
+    }
 
     try {
       setGlobal((v) => ({ ...v, loading: true }));
-      const res = await writeNewDiary(
-        profileId,
-        isMedicine ? 'medicine' : 'food',
-        selected.item.id,
-        `${dateSelected}T${String(date.hour).padStart(2, '0')}:${String(date.min).padStart(2, '0')}:00.000Z`
-      );
-      if (res.status >= 400) {
-        toast.error(res.data.message);
-      } else if (String(res.status)[0] === '2') {
+      const res = await Promise.all(proms);
+      if (res.some((item) => String(item.status)[0] === '2')) {
         toast('등록되었어요.');
         refreshSuper();
       }
@@ -63,46 +75,95 @@ const CreateNew = (props) => {
     } finally {
       setGlobal((v) => ({ ...v, loading: false }));
     }
+
+    // if (!selected?.item?.id) {
+    //   toast(`${isMedicine ? '의약품' : '식품'}을 선택하세요.`);
+    //   return;
+    // }
+    // console.log({ profileId, itemId: selected.id });
+    // try {
+    //   setGlobal((v) => ({ ...v, loading: true }));
+    //   const res = await writeNewDiary(
+    //     profileId,
+    //     isMedicine ? 'medicine' : 'food',
+    //     selected.item.id,
+    //     `${dateSelected}T${String(date.hour).padStart(2, '0')}:${String(date.min).padStart(2, '0')}:00.000Z`
+    //   );
+    //   if (res.status >= 400) {
+    //     toast.error(res.data.message);
+    //   } else if (String(res.status)[0] === '2') {
+    //     toast('등록되었어요.');
+    //     refreshSuper();
+    //   }
+    // } catch (err) {
+    //   toast.error('나중에 다시 시도하세요.');
+    // } finally {
+    //   setGlobal((v) => ({ ...v, loading: false }));
+    // }
   };
 
-  useEffect(() => {
-    setSelected({ item: {} });
-  }, [isMedicine]);
+  // useEffect(() => {
+  //   setSelected({ item: {} });
+  // }, [isMedicine]);
 
   const renderSelector = () => {
-    if (isMedicine) {
-      return (
+    // if (isMedicine) {
+    //   return (
+
+    //   );
+    // }
+
+    return (
+      <>
+        <Autocomplete
+          disablePortal
+          options={options.foods}
+          getOptionDisabled={(option) => food.id === option.id}
+          fullWidth
+          renderInput={(params) => <TextField {...params} label="식품" size="small" />}
+          onChange={(e, newValue) => setFood({ ...newValue })}
+          value={food.label}
+        />
+        <Autocomplete
+          disablePortal
+          options={options.symptoms}
+          getOptionDisabled={(option) => symptom.id === option.id}
+          fullWidth
+          renderInput={(params) => <TextField {...params} label="증상" size="small" />}
+          onChange={(e, newValue) => setFood({ ...newValue })}
+          value={symptom.label}
+        />
+        <Button
+          startIcon={<ImageIcon />}
+          component="label"
+          onClick={() => setUploadedImage(null)}
+          onChange={(e) => {
+            let reader = new FileReader();
+            reader.readAsDataURL(e.target.files[0]);
+            reader.onload = async (e) => {
+              const imageData = e.target.result;
+              setUploadedImage(imageData);
+            };
+          }}
+        >
+          이미지 업로드
+          <input type="file" hidden accept="image/png, image/jpeg" />
+        </Button>
         <Autocomplete
           disablePortal
           options={options.medicines}
-          getOptionDisabled={(option) => selected.item.id === option.id}
+          getOptionDisabled={(option) => medicine.id === option.id}
           fullWidth
           renderInput={(params) => <TextField {...params} label="의약품" size="small" />}
-          onChange={(e, newValue) => setSelected((v) => ({ ...v, item: { ...newValue } }))}
-          value={selected.item.label}
+          onChange={(e, newValue) => setFood({ ...newValue })}
+          value={medicine.label}
         />
-      );
-    }
-
-    return (
-      <Autocomplete
-        disablePortal
-        options={options.foods}
-        getOptionDisabled={(option) => selected.item.id === option.id}
-        fullWidth
-        renderInput={(params) => <TextField {...params} label="식품" size="small" />}
-        onChange={(e, newValue) => setSelected((v) => ({ ...v, item: { ...newValue } }))}
-        value={selected.item.label}
-      />
+      </>
     );
   };
 
   return (
     <Box sx={{ '& > *': { mb: 2 } }}>
-      <FormControlLabel
-        control={<Switch value={isMedicine} onChange={(e) => setIsMedicine(e.target.checked)} />}
-        label={`종류 : ${isMedicine ? '의약품' : '식품'}`}
-      />
       {renderSelector()}
       <Typography>섭취(복용) 시간</Typography>
       <Grid container spacing={1}>

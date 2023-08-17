@@ -70,8 +70,9 @@ const useList = () => {
     const ingredients = refresh(REST.GET, API.INGREDIENT.ingredient);
     const foods = refresh(REST.GET, API.FOOD.food);
     const medicines = refresh(REST.GET, API.MEDICINE.medicine);
+    const symptoms = refresh(REST.GET, API.SYMPTOM.symptom);
 
-    const proms = await Promise.all([materials, allergies, ingredients, foods, medicines]);
+    const proms = await Promise.all([materials, allergies, ingredients, foods, medicines, symptoms]);
 
     const res = {
       materials: proms[0].data.map(({ id, name }) => ({ label: name, id })),
@@ -79,6 +80,7 @@ const useList = () => {
       ingredients: proms[2].data.map(({ id, name }) => ({ label: name, id })),
       foods: proms[3].data.map(({ id, name }) => ({ label: name, id })),
       medicines: proms[4].data.map(({ id, name }) => ({ label: name, id })),
+      symptoms: proms[5].data.map(({ id, name }) => ({ label: name, id })),
     };
 
     setOptions({ ...res });
@@ -126,6 +128,17 @@ const useList = () => {
     return res;
   };
 
+  /**
+   *
+   * @param {number} profileId
+   * @param {string} token
+   * @returns
+   */
+  const getProfileShared = async (profileId, token) => {
+    const res = await refresh(REST.GET, `${API.USER.profileShare}/${profileId}`, { params: { token } });
+    return res;
+  };
+
   return {
     getContacts,
     addFamily,
@@ -137,6 +150,7 @@ const useList = () => {
     removeElement,
     getRate,
     postReview,
+    getProfileShared,
   };
 };
 

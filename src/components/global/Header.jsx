@@ -20,7 +20,7 @@ import { toast } from 'react-hot-toast';
 const SingleMenu = (props) => {
   const { activated, children, onClick } = props;
   return (
-    <Box sx={{ display: 'inline-block', width: 'calc(100% / 4 - 28px)', minWidth: 70 }}>
+    <Box sx={{ display: 'inline-block', width: 'calc(100% / 4 - 28px)' }}>
       <IconButton
         size="large"
         onClick={onClick}
@@ -63,7 +63,7 @@ const Header = () => {
           position: 'fixed',
           bottom: 0,
           left: 0,
-          minWidth: 400,
+          minWidth: 380,
           width: '100vw',
           height: 60,
           boxShadow: `0 -3px 64px rgba(0,0,0,0.16)`,

@@ -34,6 +34,10 @@ const API = {
     /** GET/{medicineId} */
     medicine: `/medicine`,
   },
+  SYMPTOM: {
+    /** GET */
+    symptom: `/symptom`,
+  },
   SCANNER: {
     /** GET */
     food: `/scanner/food`,
@@ -73,7 +77,7 @@ const API = {
     validate: `/user/validate`,
     /** POST */
     profileElement: `/user/profile/element`,
-    /** POST or DELETE */
+    /** POST or DELETE/{profileId} */
     profileImage: `/user/profile/image`,
     /** GET or POST */
     passwordReset: `/user/password-reset`,
