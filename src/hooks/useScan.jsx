@@ -57,10 +57,10 @@ const useScan = () => {
       : await refresh(REST.GET, API.SCANNER.food, { params: { barcode: serial } });
     res = getResponseUsable(res);
 
-    // if (isSuccess(res.status)) {
-    //   console.log(res);
-    //   return res;
-    // }
+    // ... db에서 없다고 신호보내면 직접 등록으로
+    if (!isSuccess(res.status)) {
+      return res;
+    }
 
     const id = res.data.id;
     return await searchById(id, isMedicine, profileIdList);
