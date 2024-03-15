@@ -277,11 +277,264 @@ export const guessState = atom({
       ],
     },
     medicine: {
-      profileId: -1,
-      name: '',
-      startDate: '',
-      endDate: '',
-      guessData: [{}, {}, {}, {}],
+      profileId: 1,
+      name: '홍길동',
+      startDate: '2023-07-01',
+      endDate: '2023-07-31',
+      guessedData: [
+        {
+          type: 'ingredient',
+          elementId: 31,
+          imageUrl: 'https://s5.allergysafe.life/files/12f0d294bd084c72a0fb7af7de5fee49.jpg',
+          name: '스테아르산마그네슘',
+          totalCount: 11,
+          totalSymptomOccuredCount: 10,
+          percentage: 91,
+          cards: [
+            {
+              type: 'medicine',
+              elementId: 15,
+              name: '아로나민골드정',
+              dateTime: '2023-07-31T15:44:01.289',
+              symptoms: [
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+                {
+                  id: 9,
+                  name: '가슴의 압박감',
+                },
+              ],
+            },
+            {
+              type: 'medicine',
+              elementId: 40,
+              name: '게루삼정',
+              dateTime: '2023-07-31T15:44:01.289',
+              symptoms: [
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+                {
+                  id: 9,
+                  name: '가슴의 압박감',
+                },
+              ],
+            },
+            {
+              type: 'medicine',
+              elementId: 15,
+              name: '아로나민골드정',
+              dateTime: '2023-07-30T11:20:01.289',
+              symptoms: [
+                {
+                  id: 2,
+                  name: '호흡곤란',
+                },
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+                {
+                  id: 9,
+                  name: '가슴의 압박감',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'ingredient',
+          elementId: 85,
+          imageUrl: 'https://s5.allergysafe.life/files/12f0d294bd084c72a0fb7af7de5fee49.jpg',
+          name: '염화나트륨',
+          totalCount: 12,
+          totalSymptomOccuredCount: 7,
+          percentage: 58,
+          cards: [
+            {
+              type: 'medicine',
+              elementId: 39,
+              name: '라식스주사(푸로세미드)',
+              dateTime: '2023-07-31T15:44:01.289',
+              symptoms: [
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+                {
+                  id: 9,
+                  name: '가슴의 압박감',
+                },
+              ],
+            },
+            {
+              type: 'medicine',
+              elementId: 39,
+              name: '라식스주사(푸로세미드)',
+              dateTime: '2023-07-30T11:20:01.289',
+              symptoms: [
+                {
+                  id: 2,
+                  name: '호흡곤란',
+                },
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+                {
+                  id: 9,
+                  name: '가슴의 압박감',
+                },
+              ],
+            },
+            {
+              type: 'medicine',
+              elementId: 39,
+              name: '라식스주사(푸로세미드)',
+              dateTime: '2023-07-28T12:30:01.289',
+              symptoms: [
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+                {
+                  id: 9,
+                  name: '가슴의 압박감',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'ingredient',
+          elementId: 119,
+          imageUrl: 'https://s5.allergysafe.life/files/12f0d294bd084c72a0fb7af7de5fee49.jpg',
+          name: '포도당',
+          totalCount: 13,
+          totalSymptomOccuredCount: 3,
+          percentage: 23,
+          cards: [
+            {
+              type: 'medicine',
+              elementId: 36,
+              name: '제일포도당주사액',
+              dateTime: '2023-07-30T11:20:01.289',
+              symptoms: [
+                {
+                  id: 2,
+                  name: '호흡곤란',
+                },
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+                {
+                  id: 9,
+                  name: '가슴의 압박감',
+                },
+              ],
+            },
+            {
+              type: 'medicine',
+              elementId: 36,
+              name: '제일포도당주사액',
+              dateTime: '2023-07-28T12:30:01.289',
+              symptoms: [
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+                {
+                  id: 9,
+                  name: '가슴의 압박감',
+                },
+              ],
+            },
+            {
+              type: 'medicine',
+              elementId: 36,
+              name: '제일포도당주사액',
+              dateTime: '2023-07-27T12:00:01.289',
+              symptoms: [
+                {
+                  id: 2,
+                  name: '호흡곤란',
+                },
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'ingredient',
+          elementId: 62,
+          imageUrl: 'https://s5.allergysafe.life/files/12f0d294bd084c72a0fb7af7de5fee49.jpg',
+          name: '시트르산나트륨수화물',
+          totalCount: 16,
+          totalSymptomOccuredCount: 3,
+          percentage: 19,
+          cards: [
+            {
+              type: 'medicine',
+              elementId: 14,
+              name: '판콜에이내복액',
+              dateTime: '2023-07-22T18:30:01.289',
+              symptoms: [
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+                {
+                  id: 9,
+                  name: '가슴의 압박감',
+                },
+              ],
+            },
+            {
+              type: 'medicine',
+              elementId: 14,
+              name: '판콜에이내복액',
+              dateTime: '2023-07-21T12:30:01.289',
+              symptoms: [
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+                {
+                  id: 9,
+                  name: '가슴의 압박감',
+                },
+              ],
+            },
+            {
+              type: 'medicine',
+              elementId: 14,
+              name: '판콜에이내복액',
+              dateTime: '2023-07-20T11:30:01.289',
+              symptoms: [
+                {
+                  id: 2,
+                  name: '호흡곤란',
+                },
+                {
+                  id: 5,
+                  name: '두드러기',
+                },
+                {
+                  id: 9,
+                  name: '가슴의 압박감',
+                },
+              ],
+            },
+          ],
+        },
+      ],
     },
   },
 });

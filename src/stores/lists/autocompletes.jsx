@@ -10,5 +10,6 @@ export const autocompleteState = atom({
     ingredients: [],
     foods: [],
     medicines: [],
+    symptoms: [],
   },
 });

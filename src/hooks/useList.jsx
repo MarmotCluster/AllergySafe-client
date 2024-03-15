@@ -2,9 +2,11 @@ import React from 'react';
 import { useRecoilState } from 'recoil';
 import { friendListState } from '../stores/lists/friends';
 import { autocompleteState } from '../stores/lists/autocompletes';
-import { REST, refresh, tryCatchResponse } from '../utils';
+import { REST, getResponseUsable, isSuccess, refresh, tryCatchResponse } from '../utils';
 import API from '../configs/API';
 import { authState } from '../stores/auth/atom';
+import { rateState } from '../stores/lists/rates';
+import server from '../configs/server';
 
 const useList = () => {
   /* stores */
@@ -13,6 +15,8 @@ const useList = () => {
   const [friends, setFriends] = useRecoilState(friendListState);
 
   const [options, setOptions] = useRecoilState(autocompleteState);
+
+  const [rates, setRates] = useRecoilState(rateState);
 
   /* functions */
   const getContacts = async () => {
@@ -67,8 +71,9 @@ const useList = () => {
     const ingredients = refresh(REST.GET, API.INGREDIENT.ingredient);
     const foods = refresh(REST.GET, API.FOOD.food);
     const medicines = refresh(REST.GET, API.MEDICINE.medicine);
+    const symptoms = refresh(REST.GET, API.SYMPTOM.symptom);
 
-    const proms = await Promise.all([materials, allergies, ingredients, foods, medicines]);
+    const proms = await Promise.all([materials, allergies, ingredients, foods, medicines, symptoms]);
 
     const res = {
       materials: proms[0].data.map(({ id, name }) => ({ label: name, id })),
@@ -76,6 +81,7 @@ const useList = () => {
       ingredients: proms[2].data.map(({ id, name }) => ({ label: name, id })),
       foods: proms[3].data.map(({ id, name }) => ({ label: name, id })),
       medicines: proms[4].data.map(({ id, name }) => ({ label: name, id })),
+      symptoms: proms[5].data.map(({ id, name }) => ({ label: name, id })),
     };
 
     setOptions({ ...res });
@@ -104,6 +110,42 @@ const useList = () => {
     return res;
   };
 
+  const getRate = async () => {
+    const res = await refresh(REST.GET, `${API.RATE.rate}`);
+    if (isSuccess(res.status)) {
+      setRates({ ...res.data });
+    }
+    return res;
+  };
+
+  /**
+   *
+   * @param {number} rate
+   * @param {string} content
+   * @returns
+   */
+  const postReview = async (star, content) => {
+    const res = await refresh(REST.POST, `${API.RATE.rate}`, undefined, { star, content });
+    return res;
+  };
+
+  /**
+   *
+   * @param {number} profileId
+   * @param {string} token
+   * @returns
+   */
+  const getProfileShared = async (profileId, token) => {
+    return tryCatchResponse(async () => {
+      try {
+        const res = await server.get(`${API.USER.profileShare}/${profileId}`, { params: { token } });
+        return getResponseUsable(res);
+      } catch (err) {
+        return getResponseUsable(err.response);
+      }
+    });
+  };
+
   return {
     getContacts,
     addFamily,
@@ -113,6 +155,9 @@ const useList = () => {
     getAutocompletes,
     postElement,
     removeElement,
+    getRate,
+    postReview,
+    getProfileShared,
   };
 };
 

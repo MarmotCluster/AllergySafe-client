@@ -1,5 +1,5 @@
 import React from 'react';
-import { REST, refresh } from '../utils';
+import { REST, isSuccess, refresh } from '../utils';
 import API from '../configs/API';
 
 const useDiary = () => {
@@ -66,18 +66,18 @@ const useDiary = () => {
   /**
    *
    * @param {number} profileId
-   * @param {'food' | 'medicine'} diaryElementType
+   * @param {'food' | 'medicine' | 'symptom'} diaryElementType
    * @param {number} itemId
    * @param {string=} dateTime yyyy-mm-dd
    */
-  const writeNewDiary = async (profileId, diaryElementType, itemId, dateTime = undefined) => {
+  const writeNewDiary = async (profileId, diaryElementType, itemId, dateTime = undefined, base64String = null) => {
     const date = new Date(Date.now() + 9 * 60 * 60 * 1000);
     const today = dateTime ? dateTime.split('T')[0] : date.toISOString().split('T')[0];
 
     // ... 금일 일기가 있는지 먼저 확인
     let diaryId = null;
     let diaryToday = await getDiaryByDate(profileId, today);
-    if (String(diaryToday.status)[0] === '2') {
+    if (isSuccess(diaryToday.status)) {
       diaryId = diaryToday.data.id;
     } else if (diaryToday.status >= 400) {
       // ... 없으면 생성 후에
@@ -95,6 +95,7 @@ const useDiary = () => {
       id: itemId,
       // dateTime: date.toISOString().split('T')[0] + 'T00:00:01.000Z',
       dateTime: dateTime ? dateTime : date.toISOString(),
+      base64String,
     });
     return res;
   };

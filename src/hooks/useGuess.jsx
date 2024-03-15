@@ -52,16 +52,15 @@ const useGuess = () => {
    * @returns
    */
   const getMedicine = async (profileId, startDate, endDate) => {
-    if (!startDate || !endDate) {
-      const predate = privateGetRecentDate();
-      startDate = predate.startDate;
-      endDate = predate.endDate;
-    }
-    console.log({ profileId, startDate, endDate });
-
-    const res = await refresh(REST.GET, `${API.GUESS.medicine}/${profileId}`, { params: { startDate, endDate } });
-    setGuess((v) => ({ ...v, medicine: res.data }));
-    return res;
+    // if (!startDate || !endDate) {
+    //   const predate = privateGetRecentDate();
+    //   startDate = predate.startDate;
+    //   endDate = predate.endDate;
+    // }
+    // console.log({ profileId, startDate, endDate });
+    // const res = await refresh(REST.GET, `${API.GUESS.medicine}/${profileId}`, { params: { startDate, endDate } });
+    // setGuess((v) => ({ ...v, medicine: res.data }));
+    // return res;
   };
 
   return { getFood, getMedicine };

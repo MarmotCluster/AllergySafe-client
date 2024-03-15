@@ -43,6 +43,7 @@
  * @property {APIStaticItemDefault[]} ingredients
  * @property {APIStaticItemDefault[]} foods
  * @property {APIStaticItemDefault[]} medicines
+ * @property {APIStaticItemDefault[]} symptoms
  */
 
 /* DIARY */

@@ -18,7 +18,7 @@ const useAuth = () => {
   const [auth, setAuth] = useRecoilState(authState);
 
   /* hooks */
-  const { getContacts, getAutocompletes } = useList();
+  const { getContacts, getAutocompletes, getRate } = useList();
   const { getFood, getMedicine } = useGuess();
 
   const me = async (isCalledInAuthContext = false) => {
@@ -28,6 +28,7 @@ const useAuth = () => {
       getAutocompletes();
       getFood(res.data.id);
       getMedicine(res.data.id);
+      getRate(res.data.id);
       setAuth((state) => ({ ...state, isSignedIn: true, userData: res.data }));
     }
     return res;
@@ -88,38 +89,40 @@ const useAuth = () => {
    * @returns
    */
   const changePassword = async (form) => {
-    const res = await refresh(REST.PUT, API.USER.user, undefined, form);
+    const res = await refresh(REST.POST, API.USER.me, undefined, form);
     return res;
   };
 
   /**
    *
    * @param {number} profileId
-   * @param {FormData} formData
+   * @param {string} base64String
    * @returns
    */
-  const changeProfileImage = async (profileId, formData) => {
-    return await tryCatchResponse(async () => {
-      try {
-        // const token = window.localStorage.getItem('accessToken');
-        const token = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQGV4YW1wbGUuY29tIiwiaXNzIjoiaHR0cHM6Ly9naXRodWIuY29tL2Rldi10YWV3b24ta2ltIiwiZXhwIjoxNzI3NjcxMTM3LCJpYXQiOjE2OTE2NzExMzd9.zYDWwv1Ja5xPO5QuZBcMbOuWly2nU2gLcRSm83lXQPs`;
-        let res = await axios.post(`https://r2.allergysafe.life/image.png`, formData, {
-          headers: { 'Content-Type': 'image/png' },
-          params: { token, mimeType: 'image/png' },
-        });
-        res = getResponseUsable(res);
+  const changeProfileImage = async (profileId, base64String) => {
+    // return await tryCatchResponse(async () => {
+    //   try {
+    //     // const token = window.localStorage.getItem('accessToken');
+    //     const token = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQGV4YW1wbGUuY29tIiwiaXNzIjoiaHR0cHM6Ly9naXRodWIuY29tL2Rldi10YWV3b24ta2ltIiwiZXhwIjoxNzI3NjcxMTM3LCJpYXQiOjE2OTE2NzExMzd9.zYDWwv1Ja5xPO5QuZBcMbOuWly2nU2gLcRSm83lXQPs`;
+    //     let res = await axios.post(`https://r2.allergysafe.life/image.png`, imageBase64, {
+    //       headers: { 'Content-Type': 'image/png' },
+    //       params: { token, mimeType: 'image/png' },
+    //     });
+    //     res = getResponseUsable(res);
 
-        if (res.status >= 400) {
-          return res;
-        }
+    //     if (res.status >= 400) {
+    //       return res;
+    //     }
 
-        const urlFixed = res.data.url.replace('.undefined', '.png');
-        res = await refresh(REST.POST, `${API.USER.profileImage}/${profileId}`, undefined, { imageUrl: urlFixed });
-        return res;
-      } catch (err) {
-        return getResponseUsable(err.response);
-      }
-    });
+    //     const urlFixed = res.data.url.replace('.undefined', '.png');
+    //     res = await refresh(REST.POST, `${API.USER.profileImage}/${profileId}`, undefined, { imageUrl: urlFixed });
+    //     return res;
+    //   } catch (err) {
+    //     return getResponseUsable(err.response);
+    //   }
+    // });
+    const res = await refresh(REST.POST, `${API.USER.profileImage}/${profileId}`, undefined, { base64String });
+    return res;
   };
 
   /**
@@ -162,12 +165,29 @@ const useAuth = () => {
     });
   };
 
+  const withdraw = async () => {
+    const res = await refresh(REST.DELETE, API.USER.me);
+    logout();
+    return res;
+  };
+
   const test = async () => {
     // const res = await server.get(API.HEALTH.health);
     // console.log(res);
   };
 
-  return { me, login, logout, register, test, doEmailValidate, changePassword, changeProfileImage, requestReset };
+  return {
+    me,
+    login,
+    logout,
+    register,
+    test,
+    doEmailValidate,
+    changePassword,
+    changeProfileImage,
+    requestReset,
+    withdraw,
+  };
 };
 
 export default useAuth;

@@ -7,6 +7,7 @@ import {
   Grid,
   IconButton,
   Radio,
+  Rating,
   Tooltip,
   Typography,
   alpha,
@@ -39,6 +40,12 @@ import { guessState } from '../../stores/lists/guess';
 import HideImageIcon from '@mui/icons-material/HideImage';
 import { DateHandler } from '../../utils';
 
+import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
+import RateUs from '../../components/modal/RateUs';
+import { rateState } from '../../stores/lists/rates';
+
+const STATIC_HEIGHT = 730;
+
 const Home = () => {
   /* refs */
   /**@type {React.MutableRefObject<HTMLDivElement>} */
@@ -48,6 +55,7 @@ const Home = () => {
   const auth = useRecoilValue(authState);
   const contact = useRecoilValue(friendListState);
   const guess = useRecoilValue(guessState);
+  const rates = useRecoilValue(rateState);
 
   /* hooks */
   const theme = useTheme();
@@ -60,6 +68,9 @@ const Home = () => {
   const [isMedicine, setIsMedicine] = useState(false);
   const [percentage, setPercentage] = useState(50);
   const [itemSelected, setItemSelected] = useState('0');
+
+  const [rate, setRate] = useState(5);
+  const [openRange, setOpenRange] = useState(false);
 
   const [daterange, setDaterange] = useState({
     from: '2023-08-01',
@@ -134,6 +145,10 @@ const Home = () => {
     console.log({ guess });
   }, [guess]);
 
+  useEffect(() => {
+    console.log(rates);
+  }, [rates]);
+
   /* render */
   /**
    *
@@ -167,7 +182,11 @@ const Home = () => {
         ></Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {key === 'food' ? <EggAltIcon color="secondary" /> : <MedicationIcon color="primary" />}
-          <Button endIcon={<FlipCameraAndroidIcon />} onClick={() => setIsMedicine(key === 'food')}>
+          <Button
+            endIcon={<FlipCameraAndroidIcon />}
+            onClick={() => setIsMedicine(key === 'food')}
+            color={key === 'food' ? 'primary' : 'secondary'}
+          >
             {key === 'food' ? '의약품으로..' : '식품으로..'}
           </Button>
         </Box>
@@ -181,7 +200,7 @@ const Home = () => {
             <Box>
               <Box sx={{ display: 'flex', justifyContent: 'end' }}>
                 <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                  <Typography variant="caption">추론 대상 일자</Typography>
+                  <Typography variant="caption">추론 대상</Typography>
                   <Typography sx={{ width: 100, textAlign: 'right', fontWeight: 900 }}>
                     {guess[key].startDate?.replace(/-/g, '.')}
                   </Typography>
@@ -262,7 +281,7 @@ const Home = () => {
         <Grid container sx={{ textAlign: 'center', my: 2 }}>
           {Array.from({ length: 4 }).map((_, index) => {
             return (
-              <Grid key={index} item xs={3}>
+              <Grid key={index} item xs={6}>
                 <Typography
                   variant="body2"
                   color={
@@ -277,7 +296,7 @@ const Home = () => {
                 </Typography>
                 <Typography
                   sx={{
-                    fontSize: 24,
+                    fontSize: 18,
                     fontWeight: 900,
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
@@ -349,7 +368,7 @@ const Home = () => {
 
   return (
     <>
-      <Box sx={{ m: 2, pb: 10 }}>
+      <Box sx={{ m: 2 }}>
         <Box name="topbar" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography>알레르기 항원 추론</Typography>
           <Box sx={{ display: 'flex' }}>
@@ -374,7 +393,7 @@ const Home = () => {
             transition: '.4s',
             transformStyle: 'preserve-3d',
             width: '100%',
-            height: 676,
+            height: STATIC_HEIGHT,
             transform: isMedicine ? 'rotateY(180deg)' : 'rotateY(0deg)',
           }}
         >
@@ -424,7 +443,7 @@ const Home = () => {
         <Box sx={{ mt: 3, p: 2 }}>
           <Typography>
             <Typography component="span" sx={{ fontWeight: 900 }}>
-              {selectedName}
+              {guess[isMedicine ? 'medicine' : 'food'].name || selectedName || '-'}
             </Typography>
             님의 식단 분석
           </Typography>
@@ -499,6 +518,7 @@ const Home = () => {
                       : ''
                   }
                   placement="top"
+                  enterTouchDelay={0}
                 >
                   {guess[isMedicine ? 'medicine' : 'food'].guessedData?.length > 0 &&
                   guess[isMedicine ? 'medicine' : 'food'].guessedData[Number(itemSelected)].imageUrl ? (
@@ -602,6 +622,29 @@ const Home = () => {
         </Box>
       </Box>
 
+      <Box sx={{ bgcolor: 'white', p: 2, pb: 12, textAlign: 'center', position: 'relative' }}>
+        <Typography>{rates.star !== -1 ? '🙏평가해 주셔서 감사합니다!' : '🙋‍♂️🙋‍♀️우리의 서비스를 평가하세요!'}</Typography>
+        <Rating
+          size="large"
+          sx={{ py: 2 }}
+          value={rates.star !== -1 ? rates.star : rate}
+          onChange={(e, newValue) => {
+            if (newValue < rate) {
+              setRate(newValue < 1 ? 1 : newValue);
+            } else {
+              setRate(newValue);
+            }
+          }}
+          onClick={() => setOpenRange(true)}
+          readOnly={rates.star !== -1}
+        />
+        {rates.reviews !== -1 && (
+          <Button startIcon={<ThumbsUpDownIcon />} fullWidth size="large" onClick={() => setOpenRange(true)}>
+            ..평가 더 보기
+          </Button>
+        )}
+      </Box>
+
       <UserSelector
         open={open}
         close={() => setOpen(false)}
@@ -609,6 +652,8 @@ const Home = () => {
         selectedState={[selected, setSelected]}
         selectedNameState={[selectedName, setSelectedName]}
       />
+
+      <RateUs openState={[openRange, setOpenRange]} rateState={[rate, setRate]} />
     </>
   );
 };

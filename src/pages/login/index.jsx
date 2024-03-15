@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast';
 import server from '../../configs/server';
 import API from '../../configs/API';
 import axios from 'axios';
+import Logo from '../../components/auth/Logo';
 
 const Login = () => {
   /* hooks */
@@ -18,8 +19,8 @@ const Login = () => {
   const [global, setGlobal] = useRecoilState(globalState);
 
   /* states */
-  const [id, setId] = useState('example@example.com');
-  const [password, setPassword] = useState('abcd1234@');
+  const [id, setId] = useState('');
+  const [password, setPassword] = useState('');
   const [errorId, setErrorId] = useState(false);
   const [errorPassword, setErrorPassword] = useState(false);
   const [errorEmail, setErrorEmail] = useState(false);
@@ -107,6 +108,17 @@ const Login = () => {
       }}
     >
       <Box sx={{ width: '100%' }}>
+        <Box sx={{ textAlign: 'center', pb: 2 }}>
+          <Box
+            sx={{
+              width: 50,
+              height: 50,
+              backgroundImage: `url('${process.env.PUBLIC_URL}/colored.svg')`,
+              backgroundSize: 'cover',
+              display: 'inline-block',
+            }}
+          ></Box>
+        </Box>
         <Typography variant="body1" display="block" textAlign="center" mb={2}>
           <b>이메일</b>과 <b>비밀번호</b>를 입력하세요.
         </Typography>
@@ -125,7 +137,7 @@ const Login = () => {
           <TextField
             fullWidth
             type="password"
-            label="비닐번호"
+            label="비밀번호"
             placeholder="password"
             sx={{ mb: 2 }}
             onChange={(e) => setPassword(e.target.value)}

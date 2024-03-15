@@ -146,6 +146,22 @@ export const unescapeHTML = (escapedHTML: string) => {
     .replace(/&#x27;/g, "'");
 };
 
+/**
+ *
+ * @param {number} responseStatus
+ */
+export const isSuccess = (responseStatus) => {
+  return String(responseStatus)[0] === '2';
+};
+
+/**
+ *
+ * @param {number} responseStatus
+ */
+export const isFailed = (responseStatus) => {
+  return responseStatus >= 400;
+};
+
 export const convertDateStringToOurs = (dateString: string) => {
   const d = new Date(dateString);
   const year = d.getFullYear();

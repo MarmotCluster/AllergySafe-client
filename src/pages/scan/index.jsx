@@ -38,6 +38,7 @@ import useList from '@mui/base/useList/useList';
 import { friendListState } from '../../stores/lists/friends';
 
 import QrCode2Icon from '@mui/icons-material/QrCode2';
+import { isSuccess } from '../../utils';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
@@ -62,7 +63,7 @@ const Scan = () => {
   const [decodedResults, setDecodedResults] = useState([]);
 
   const [isMedicine, setIsMedicine] = useState(false);
-  const [serial, setSerial] = useState('8801045520124'); // 진라면 static for temporal
+  const [serial, setSerial] = useState(''); // 진라면 static for temporal
   const [error, setError] = useState({ serial: false });
 
   /* functions */
@@ -106,7 +107,8 @@ const Scan = () => {
       if (res.status >= 400) {
         toast.error(res.data.message);
         setOpenself(true);
-      } else if (String(res.status)[0] === '2') {
+      } else if (isSuccess(res.status)) {
+        console.log(res);
         navigate('/result');
       }
     } catch (err) {
@@ -125,7 +127,7 @@ const Scan = () => {
       if (res.status >= 400) {
         toast.error(res.data.message);
         setOpenself(true);
-      } else if (String(res.status)[0] === '2') {
+      } else if (isSuccess(res.status)) {
         navigate('/result');
       }
     } catch (err) {

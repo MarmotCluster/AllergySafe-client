@@ -5,6 +5,7 @@ import useAuth from '../../hooks/useAuth';
 import { useRecoilState } from 'recoil';
 import { globalState } from '../../stores/global/atom';
 import { toast } from 'react-hot-toast';
+import { isSuccess } from '../../utils';
 
 const Register = () => {
   /* hooks */
@@ -64,7 +65,7 @@ const Register = () => {
       const res = await register({ name: username, email, password });
       if (res.status >= 400) {
         toast.error(res.data.message);
-      } else if (String(res.status)[0] === '2') {
+      } else if (isSuccess(res.status)) {
         toast(res.data.message);
         navigate('/login', { replace: true });
       }
@@ -86,6 +87,17 @@ const Register = () => {
       }}
     >
       <Box sx={{ width: '100%' }}>
+        <Box sx={{ textAlign: 'center', pb: 2 }}>
+          <Box
+            sx={{
+              width: 50,
+              height: 50,
+              backgroundImage: `url('${process.env.PUBLIC_URL}/colored.svg')`,
+              backgroundSize: 'cover',
+              display: 'inline-block',
+            }}
+          ></Box>
+        </Box>
         <Typography variant="body1" display="block" textAlign="center" mb={2}>
           아래 <b>양식</b>을 작성하세요.
         </Typography>
@@ -113,7 +125,7 @@ const Register = () => {
           <TextField
             fullWidth
             type="password"
-            label="비닐번호"
+            label="비밀번호"
             placeholder="password"
             sx={{ mb: 2 }}
             onChange={(e) => setPassword(e.target.value)}
@@ -124,7 +136,7 @@ const Register = () => {
           <TextField
             fullWidth
             type="password"
-            label="비닐번호 확인"
+            label="비밀번호 확인"
             placeholder="password"
             sx={{ mb: 2 }}
             onChange={(e) => setConfirm(e.target.value)}

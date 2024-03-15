@@ -3,7 +3,7 @@ import useScan from '../../hooks/useScan';
 import { Avatar, Box, Button, Card, CardContent, Chip, Divider, Stack, Typography } from '@mui/material';
 
 import QrCode2Icon from '@mui/icons-material/QrCode2';
-import { getTextColorForBackground } from '../../utils';
+import { getTextColorForBackground, isSuccess } from '../../utils';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
@@ -36,7 +36,7 @@ const ScanResult = () => {
       const res = await writeNewDiary(auth.userData?.id, scanResult.isMedicine ? 'medicine' : 'food', scanResult?.id);
       if (res.status >= 400) {
         toast.error(res.data.message);
-      } else if (String(res.status)[0] === '2') {
+      } else if (isSuccess(res.status)) {
         toast('일기장에 등록되었어요.');
         setIsWritten(true);
       }

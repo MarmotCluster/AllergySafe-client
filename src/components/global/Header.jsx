@@ -12,6 +12,7 @@ import ContactsIcon from '@mui/icons-material/Contacts';
 import { useRecoilState } from 'recoil';
 import { authState } from '../../stores/auth/atom';
 import { toast } from 'react-hot-toast';
+import { SCREEN_MIN_WIDTH } from '../../App';
 
 /**
  *
@@ -20,7 +21,7 @@ import { toast } from 'react-hot-toast';
 const SingleMenu = (props) => {
   const { activated, children, onClick } = props;
   return (
-    <Box sx={{ display: 'inline-block', width: 'calc(100% / 4 - 28px)', minWidth: 70 }}>
+    <Box sx={{ display: 'inline-block', width: 'calc(100% / 4 - 28px)' }}>
       <IconButton
         size="large"
         onClick={onClick}
@@ -63,7 +64,7 @@ const Header = () => {
           position: 'fixed',
           bottom: 0,
           left: 0,
-          minWidth: 400,
+          minWidth: SCREEN_MIN_WIDTH,
           width: '100vw',
           height: 60,
           boxShadow: `0 -3px 64px rgba(0,0,0,0.16)`,
@@ -95,7 +96,7 @@ const Header = () => {
           <DocumentScannerIcon sx={{ width: 48, height: 48, color: '#fafafa' }} />
         </Box>
         <Box sx={{ width: '100%', textAlign: 'center' }}>
-          <SingleMenu activated={location.pathname === '/'} onClick={() => navigate('/')}>
+          <SingleMenu activated={location.pathname === '/'} onClick={() => navigate(hopTo('/'))}>
             <HomeRoundedIcon sx={{ width: 32, height: 32 }} />
           </SingleMenu>
           <SingleMenu activated={location.pathname.includes('/diary')} onClick={() => navigate(hopTo('/diary'))}>
