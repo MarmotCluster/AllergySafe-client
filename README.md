@@ -1,3 +1,5 @@
+alternative descriptions available here [`KO-KR`](https://github.com/MarmotCluster/AllergySafe-client/blob/main/README-KO.md)
+
 # Allergy Safe
 
 <div style="text-align: center">
@@ -67,7 +69,7 @@ Allergy Safe is a online tool that **analyzes food ingredients** and notifies us
 
 ### run it locally
 
-move into the project directory and run in shell commands below.
+locate into the project and run shell commands below.
 
 ```
 npm install
